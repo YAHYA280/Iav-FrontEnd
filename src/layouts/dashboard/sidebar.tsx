@@ -71,36 +71,38 @@ export function Sidebar() {
         top: 0,
         width: isCollapsed ? 80 : 280,
         height: '100vh',
-        background: 'var(--color-sidebar-bg)',
-        border: '1px solid var(--color-sidebar-border)',
-        borderTopRightRadius: '20px',
-        borderBottomRightRadius: '20px',
+        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(10, 14, 39, 0.95) 100%)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderRight: '1px solid rgba(93, 49, 248, 0.15)',
         overflow: 'visible',
-        boxShadow: '0 4px 8px 0 rgba(20, 27, 52, 0.04)',
+        boxShadow: '0 0 40px rgba(93, 49, 248, 0.2), 0 8px 32px rgba(0, 0, 0, 0.4)',
         zIndex: 1000,
         display: 'flex',
         flexDirection: 'column',
-        transition: 'width 0.3s ease',
+        transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
+      {/* Logo Section with Click to Toggle */}
       <Box
+        onClick={toggleSidebar}
         sx={{
           p: 3,
-          borderBottom: '1px solid rgba(93, 49, 248, 0.1)',
+          mb: 2,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           position: 'relative',
+          minHeight: '80px',
           cursor: 'pointer',
+          transition: 'all 0.3s ease',
           '&:hover': {
-            backgroundColor: 'rgba(190, 48, 255, 0.05)',
+            backgroundColor: 'rgba(93, 49, 248, 0.1)',
           },
-          '&:hover .toggle-button, &:hover ~ .toggle-button': {
+          '&:hover .toggle-hint': {
             opacity: 1,
           },
-          transition: 'background-color 0.2s ease',
         }}
-        onClick={toggleSidebar}
       >
         {!isCollapsed && (
           <Box
@@ -112,6 +114,10 @@ export function Sidebar() {
               height: 32,
               maxWidth: '100%',
               objectFit: 'contain',
+              transition: 'transform 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.05)',
+              },
             }}
           />
         )}
@@ -126,41 +132,34 @@ export function Sidebar() {
               height: 30,
               maxWidth: '100%',
               objectFit: 'contain',
+              transition: 'transform 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.05)',
+              },
             }}
           />
         )}
 
-        <Tooltip title={isCollapsed ? "Déplier" : "Replier"} placement="right">
-          <IconButton
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleSidebar();
-            }}
-            className="toggle-button"
-            sx={{
-              position: 'absolute',
-              right: isCollapsed ? -16 : -16,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: 32,
-              height: 32,
-              color: 'var(--color-sidebar-text)',
-              opacity: 0,
-              transition: 'opacity 0.2s ease, background-color 0.2s ease',
-              backgroundColor: 'rgba(0, 0, 0, 0.2)',
-              border: '1px solid rgba(93, 49, 248, 0.2)',
-              '&:hover': {
-                backgroundColor: 'rgba(190, 48, 255, 0.2)',
-              },
-              zIndex: 1,
-            }}
-          >
-            <FontAwesomeIcon
-              icon={isCollapsed ? 'chevron-right' : 'chevron-left'}
-              style={{ fontSize: '14px' }}
-            />
-          </IconButton>
-        </Tooltip>
+        {/* Subtle Toggle Hint Icon */}
+        <Box
+          className="toggle-hint"
+          sx={{
+            position: 'absolute',
+            bottom: 8,
+            right: isCollapsed ? 'auto' : 8,
+            left: isCollapsed ? '50%' : 'auto',
+            transform: isCollapsed ? 'translateX(-50%)' : 'none',
+            opacity: 0.4,
+            transition: 'opacity 0.3s ease',
+            color: 'rgba(255, 255, 255, 0.5)',
+            fontSize: '10px',
+          }}
+        >
+          <FontAwesomeIcon
+            icon={isCollapsed ? 'angles-right' : 'angles-left'}
+            style={{ fontSize: '12px' }}
+          />
+        </Box>
       </Box>
 
       <Box sx={{ flex: 1, py: 2 }}>
@@ -169,35 +168,42 @@ export function Sidebar() {
             const isActive = pathname === item.path;
 
             return (
-              <ListItem key={item.title} disablePadding sx={{ mb: 1 }}>
+              <ListItem key={item.title} disablePadding sx={{ mb: 1.5 }}>
                 <ListItemButton
                   component={Link}
                   href={item.path}
                   sx={{
-                    borderRadius: 2,
-                    backgroundColor: isActive ? 'rgba(190, 48, 255, 0.2)' : 'transparent',
-                    color: 'var(--color-sidebar-text)',
+                    borderRadius: '12px',
+                    background: isActive
+                      ? 'linear-gradient(135deg, rgba(93, 49, 248, 0.3), rgba(168, 85, 247, 0.2))'
+                      : 'transparent',
+                    border: isActive ? '1px solid rgba(93, 49, 248, 0.4)' : '1px solid transparent',
+                    color: '#FFF',
+                    boxShadow: isActive ? '0 4px 16px rgba(93, 49, 248, 0.3)' : 'none',
                     '&:hover': {
-                      backgroundColor: isActive
-                        ? 'rgba(190, 48, 255, 0.2)'
-                        : 'rgba(190, 48, 255, 0.1)',
+                      background: isActive
+                        ? 'linear-gradient(135deg, rgba(93, 49, 248, 0.4), rgba(168, 85, 247, 0.3))'
+                        : 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(93, 49, 248, 0.3)',
+                      transform: 'translateX(4px)',
                       '& .MuiListItemIcon-root': {
-                        color: '#A040F8',
+                        color: '#A855F7',
+                        transform: 'scale(1.1)',
                       },
                       '& .MuiListItemText-primary': {
-                        color: '#A040F8',
+                        color: '#A855F7',
                       },
                     },
                     py: 1.5,
                     px: 2,
-                    transition: 'background-color 0.2s ease',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
                 >
                   <ListItemIcon
                     sx={{
-                      color: isActive ? '#A040F8' : 'var(--color-sidebar-text)',
+                      color: isActive ? '#A855F7' : 'rgba(255, 255, 255, 0.7)',
                       minWidth: 40,
-                      transition: 'color 0.2s ease',
+                      transition: 'all 0.3s ease',
                     }}
                   >
                     <FontAwesomeIcon
@@ -211,10 +217,10 @@ export function Sidebar() {
                       sx={{
                         '& .MuiListItemText-primary': {
                           fontFamily: 'var(--font-primary)',
-                          fontWeight: 500,
+                          fontWeight: isActive ? 600 : 500,
                           fontSize: '14px',
-                          color: isActive ? '#A040F8' : 'inherit',
-                          transition: 'color 0.2s ease',
+                          color: isActive ? '#FFF' : 'rgba(255, 255, 255, 0.8)',
+                          transition: 'all 0.3s ease',
                         },
                       }}
                     />
@@ -226,42 +232,58 @@ export function Sidebar() {
         </List>
       </Box>
 
+      {/* Bottom Section */}
       <Box sx={{ p: 2 }}>
-        <Divider sx={{ borderColor: 'rgba(93, 49, 248, 0.1)', mb: 2 }} />
+        <Divider
+          sx={{
+            borderColor: 'rgba(93, 49, 248, 0.2)',
+            mb: 2,
+            '&::before, &::after': {
+              borderColor: 'rgba(93, 49, 248, 0.2)',
+            },
+          }}
+        />
         <List sx={{ px: 0 }}>
           {BOTTOM_NAV_ITEMS.map((item) => {
             const isActive = pathname === item.path;
 
             return (
-              <ListItem key={item.title} disablePadding sx={{ mb: 1 }}>
+              <ListItem key={item.title} disablePadding sx={{ mb: 1.5 }}>
                 <ListItemButton
                   component={Link}
                   href={item.path}
                   sx={{
-                    borderRadius: 2,
-                    backgroundColor: isActive ? 'rgba(190, 48, 255, 0.2)' : 'transparent',
-                    color: 'var(--color-sidebar-text)',
+                    borderRadius: '12px',
+                    background: isActive
+                      ? 'linear-gradient(135deg, rgba(93, 49, 248, 0.3), rgba(168, 85, 247, 0.2))'
+                      : 'transparent',
+                    border: isActive ? '1px solid rgba(93, 49, 248, 0.4)' : '1px solid transparent',
+                    color: '#FFF',
+                    boxShadow: isActive ? '0 4px 16px rgba(93, 49, 248, 0.3)' : 'none',
                     '&:hover': {
-                      backgroundColor: isActive
-                        ? 'rgba(190, 48, 255, 0.2)'
-                        : 'rgba(190, 48, 255, 0.1)',
+                      background: isActive
+                        ? 'linear-gradient(135deg, rgba(93, 49, 248, 0.4), rgba(168, 85, 247, 0.3))'
+                        : 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(93, 49, 248, 0.3)',
+                      transform: 'translateX(4px)',
                       '& .MuiListItemIcon-root': {
-                        color: '#A040F8',
+                        color: '#A855F7',
+                        transform: 'scale(1.1)',
                       },
                       '& .MuiListItemText-primary': {
-                        color: '#A040F8',
+                        color: '#A855F7',
                       },
                     },
                     py: 1.5,
                     px: 2,
-                    transition: 'background-color 0.2s ease',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
                 >
                   <ListItemIcon
                     sx={{
-                      color: isActive ? '#A040F8' : 'var(--color-sidebar-text)',
+                      color: isActive ? '#A855F7' : 'rgba(255, 255, 255, 0.7)',
                       minWidth: 40,
-                      transition: 'color 0.2s ease',
+                      transition: 'all 0.3s ease',
                     }}
                   >
                     <FontAwesomeIcon
@@ -275,10 +297,10 @@ export function Sidebar() {
                       sx={{
                         '& .MuiListItemText-primary': {
                           fontFamily: 'var(--font-primary)',
-                          fontWeight: 500,
+                          fontWeight: isActive ? 600 : 500,
                           fontSize: '14px',
-                          color: isActive ? '#A040F8' : 'inherit',
-                          transition: 'color 0.2s ease',
+                          color: isActive ? '#FFF' : 'rgba(255, 255, 255, 0.8)',
+                          transition: 'all 0.3s ease',
                         },
                       }}
                     />

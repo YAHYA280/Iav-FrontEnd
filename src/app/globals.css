@@ -82,6 +82,21 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
+
+  /* Galaxy colors */
+  --bg-space-deep: #0A0E27;
+  --bg-space-mid: #151B35;
+  --bg-space-light: #1E293B;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-bg-hover: rgba(15, 23, 42, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-hover: rgba(255, 255, 255, 0.2);
+
+  /* Default nebula (purple/blue) */
+  --nebula-default-1: rgba(168, 85, 247, 0.15);
+  --nebula-default-2: rgba(59, 130, 246, 0.15);
 }
 
 /* Dark mode */
@@ -171,10 +186,39 @@ input, textarea, select {
   font-family: var(--font-tertiary);
   font-weight: 700;
   font-size: 30px;
-  line-height: 12.66px; 
+  line-height: 12.66px;
   letter-spacing: -0.211px;
   text-transform: capitalize;
   color: #FFF;
+}
+
+/* Glassmorphism utility classes */
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-effect:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(12px)) {
+  .glass-effect {
+    background: rgba(15, 23, 42, 0.9);
+  }
+}
+
+/* Performance optimization for animated elements */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-background {
+  will-change: background;
 }
 
 /* Responsive breakpoints */

@@ -30,6 +30,7 @@
     "dayjs": "^1.11.11",
     "formik": "^2.4.6",
     "framer-motion": "^11.2.10",
+    "gsap": "^3.13.0",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.469.0",
     "nanoid": "^5.1.5",
