@@ -11,11 +11,11 @@ export { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 export { library } from '@fortawesome/fontawesome-svg-core';
 
 // Import and add icons to library
-import { 
-  faChartBar, 
-  faLink, 
-  faShoppingCart, 
-  faChartLine, 
+import {
+  faChartBar,
+  faLink,
+  faShoppingCart,
+  faChartLine,
   faGift,
   faCog,
   faBook,
@@ -29,7 +29,9 @@ import {
   faChevronRight,
   faLightbulb,
   faCalendarDays,
-  faImages
+  faImages,
+  faCheck,
+  faPlus
 } from '@fortawesome/free-solid-svg-icons';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -52,5 +54,7 @@ library.add(
   faChevronRight,
   faLightbulb,
   faCalendarDays,
-  faImages
+  faImages,
+  faCheck,
+  faPlus
 );
