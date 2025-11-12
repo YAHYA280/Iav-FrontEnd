@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Box, Grid, Typography, Container } from '@mui/material';
 import { useInterfaceTitle } from '@/contexts/settings/interface-title-context';
-import { AgentThemeProvider } from '@/contexts/theme/agent-theme-context';
+import { AgentThemeProvider, agentColors } from '@/contexts/theme/agent-theme-context';
 import { GalaxyBackground } from '@/shared/components/backgrounds/galaxy-background';
 import { MarketplaceCard } from '@/shared/components/ui/marketplace-card';
 import { AgentDetailPage } from '@/shared/components/ui/agent-detail-page';
+import DarkVeil from '@/shared/components/backgrounds/DarkVeil';
 import { marketplaceAgents, MarketplaceAgent } from '@/shared/_mock/marketplace-agents';
 
 export default function MarketplacePage() {
@@ -16,6 +17,13 @@ export default function MarketplacePage() {
   useEffect(() => {
     setTitle('Marketplace');
   }, [setTitle]);
+
+  // Get agent's primary color directly
+  const agentPrimaryColor = useMemo(() => {
+    if (!selectedAgent) return '#A855F7';
+    const agentColor = agentColors[selectedAgent.id as keyof typeof agentColors] || agentColors.default;
+    return agentColor.primary;
+  }, [selectedAgent]);
 
   const handleAgentClick = (agent: MarketplaceAgent) => {
     setSelectedAgent(agent);
@@ -34,8 +42,30 @@ export default function MarketplacePage() {
           pb: 6,
         }}
       >
-        {/* Galaxy Background */}
+        {/* Galaxy Background - Always visible */}
         <GalaxyBackground enableParallax />
+
+        {/* DarkVeil Background - Only visible on agent detail, layered on top of galaxy */}
+        {selectedAgent && (
+          <Box
+            sx={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 0,
+              opacity: 0.25,
+            }}
+          >
+            <DarkVeil
+              targetColor={agentPrimaryColor}
+              speed={0.4}
+              warpAmount={0.4}
+              noiseIntensity={0.03}
+            />
+          </Box>
+        )}
 
         {/* Conditional Rendering: Show either marketplace grid or agent detail */}
         {!selectedAgent ? (

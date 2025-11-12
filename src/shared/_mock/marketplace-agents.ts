@@ -99,6 +99,34 @@ export const marketplaceAgents: MarketplaceAgent[] = [
     price: '79€/mois',
     category: 'SEO',
     description: 'Optimisation SEO et référencement naturel',
+    detailedDescription: 'AYAL propulse votre visibilité en ligne avec des stratégies SEO avancées. Optimisez votre référencement naturel, améliorez votre positionnement sur les moteurs de recherche et attirez un trafic qualifié vers votre site web.',
+    features: [
+      {
+        id: 'ayal-feature-1',
+        title: 'Audit SEO complet automatisé',
+        description: 'AYAL analyse en profondeur votre site web pour identifier les opportunités d\'optimisation technique, sémantique et structurelle.',
+      },
+      {
+        id: 'ayal-feature-2',
+        title: 'Recherche de mots-clés intelligente',
+        description: 'Découvrez les mots-clés les plus pertinents et rentables pour votre secteur avec une analyse de la concurrence et du volume de recherche.',
+      },
+      {
+        id: 'ayal-feature-3',
+        title: 'Optimisation de contenu',
+        description: 'Générez et optimisez vos contenus web avec les bonnes pratiques SEO pour maximiser votre visibilité sur Google.',
+      },
+      {
+        id: 'ayal-feature-4',
+        title: 'Suivi de positionnement en temps réel',
+        description: 'Surveillez quotidiennement l\'évolution de vos positions sur les moteurs de recherche avec des rapports détaillés.',
+      },
+      {
+        id: 'ayal-feature-5',
+        title: 'Stratégie de backlinks',
+        description: 'AYAL identifie les opportunités de liens entrants de qualité et vous aide à construire une autorité de domaine solide.',
+      },
+    ],
   },
   {
     id: 'adan',
@@ -108,6 +136,34 @@ export const marketplaceAgents: MarketplaceAgent[] = [
     price: '99€/mois',
     category: 'Analytics',
     description: 'Analyse de données et insights business',
+    detailedDescription: 'ADAN transforme vos données en décisions stratégiques. Exploitez la puissance de l\'analyse de données avancée pour comprendre vos performances, identifier les tendances et prendre des décisions éclairées basées sur des insights actionnables.',
+    features: [
+      {
+        id: 'adan-feature-1',
+        title: 'Tableaux de bord intelligents',
+        description: 'Visualisez vos KPIs et métriques clés en temps réel avec des dashboards interactifs et personnalisables selon vos besoins.',
+      },
+      {
+        id: 'adan-feature-2',
+        title: 'Analyse prédictive',
+        description: 'ADAN utilise le machine learning pour prédire les tendances futures et vous aider à anticiper les évolutions du marché.',
+      },
+      {
+        id: 'adan-feature-3',
+        title: 'Rapports automatisés',
+        description: 'Recevez des rapports détaillés et personnalisés automatiquement par email avec les insights les plus importants pour votre activité.',
+      },
+      {
+        id: 'adan-feature-4',
+        title: 'Segmentation client avancée',
+        description: 'Identifiez vos segments de clients les plus rentables et comprenez leur comportement pour optimiser vos stratégies marketing.',
+      },
+      {
+        id: 'adan-feature-5',
+        title: 'Intégration multi-sources',
+        description: 'ADAN se connecte à toutes vos sources de données (CRM, Analytics, ERP) pour une vue unifiée de votre business.',
+      },
+    ],
   },
   {
     id: 'ziri',
@@ -154,6 +210,34 @@ export const marketplaceAgents: MarketplaceAgent[] = [
     price: '85€/mois',
     category: 'Content',
     description: 'Création de contenu et rédaction web',
+    detailedDescription: 'IDER révolutionne votre création de contenu avec l\'intelligence artificielle. Générez des articles de blog, des scripts vidéo, des newsletters et du contenu optimisé SEO en quelques secondes pour alimenter votre stratégie de contenu.',
+    features: [
+      {
+        id: 'ider-feature-1',
+        title: 'Génération de contenu multiformat',
+        description: 'Créez des articles de blog, posts sociaux, scripts vidéo, newsletters et pages web optimisées en un clic avec le style de votre marque.',
+      },
+      {
+        id: 'ider-feature-2',
+        title: 'Optimisation SEO automatique',
+        description: 'Chaque contenu généré est automatiquement optimisé pour le référencement avec les mots-clés pertinents et une structure SEO-friendly.',
+      },
+      {
+        id: 'ider-feature-3',
+        title: 'Adaptation tonale intelligente',
+        description: 'IDER adapte le ton et le style d\'écriture selon votre audience cible : professionnel, casual, technique ou créatif.',
+      },
+      {
+        id: 'ider-feature-4',
+        title: 'Planning éditorial automatisé',
+        description: 'Générez un calendrier éditorial complet avec des suggestions de sujets basées sur les tendances et les intérêts de votre audience.',
+      },
+      {
+        id: 'ider-feature-5',
+        title: 'Réécriture et amélioration',
+        description: 'Transformez vos contenus existants en versions améliorées, plus engageantes et optimisées pour la conversion.',
+      },
+    ],
   },
   {
     id: 'itri',
@@ -163,6 +247,34 @@ export const marketplaceAgents: MarketplaceAgent[] = [
     price: '95€/mois',
     category: 'Support',
     description: 'Service client et support technique',
+    detailedDescription: 'ITRI offre un support client exceptionnel 24h/24 et 7j/7. Automatisez vos réponses aux questions fréquentes, gérez vos tickets de support et offrez une expérience client personnalisée qui augmente la satisfaction et la fidélité.',
+    features: [
+      {
+        id: 'itri-feature-1',
+        title: 'Support multicanal 24/7',
+        description: 'ITRI répond instantanément aux demandes de vos clients sur chat, email, réseaux sociaux et téléphone, à toute heure du jour et de la nuit.',
+      },
+      {
+        id: 'itri-feature-2',
+        title: 'Résolution automatique des tickets',
+        description: 'Les questions fréquentes sont résolues automatiquement grâce à une base de connaissances intelligente qui apprend de chaque interaction.',
+      },
+      {
+        id: 'itri-feature-3',
+        title: 'Escalade intelligente',
+        description: 'Les demandes complexes sont automatiquement transférées aux agents humains appropriés avec tout le contexte nécessaire.',
+      },
+      {
+        id: 'itri-feature-4',
+        title: 'Analyse de satisfaction client',
+        description: 'Mesurez la satisfaction client après chaque interaction et identifiez les points d\'amélioration de votre service.',
+      },
+      {
+        id: 'itri-feature-5',
+        title: 'Support multilingue',
+        description: 'ITRI communique dans plus de 50 langues pour offrir un support personnalisé à votre clientèle internationale.',
+      },
+    ],
   },
   {
     id: 'aqal',
@@ -172,6 +284,34 @@ export const marketplaceAgents: MarketplaceAgent[] = [
     price: '99€/mois',
     category: 'E-commerce',
     description: 'Gestion de boutique en ligne et ventes',
+    detailedDescription: 'AQAL optimise et automatise votre boutique en ligne pour maximiser vos ventes. De la gestion des stocks aux recommandations produits personnalisées, AQAL transforme votre e-commerce en machine de conversion performante.',
+    features: [
+      {
+        id: 'aqal-feature-1',
+        title: 'Gestion automatisée des stocks',
+        description: 'AQAL surveille vos niveaux de stock en temps réel et lance automatiquement les réapprovisionnements pour éviter les ruptures.',
+      },
+      {
+        id: 'aqal-feature-2',
+        title: 'Recommandations produits IA',
+        description: 'Augmentez votre panier moyen avec des recommandations de produits ultra-personnalisées basées sur le comportement d\'achat.',
+      },
+      {
+        id: 'aqal-feature-3',
+        title: 'Optimisation des prix dynamique',
+        description: 'AQAL ajuste automatiquement vos prix en fonction de la demande, de la concurrence et des stocks pour maximiser vos marges.',
+      },
+      {
+        id: 'aqal-feature-4',
+        title: 'Recovery de panier abandonné',
+        description: 'Récupérez jusqu\'à 30% des ventes perdues avec des emails et notifications automatiques personnalisés pour les paniers abandonnés.',
+      },
+      {
+        id: 'aqal-feature-5',
+        title: 'Analytics e-commerce avancés',
+        description: 'Suivez vos KPIs e-commerce (taux de conversion, AOV, CLV) et recevez des insights actionnables pour booster vos ventes.',
+      },
+    ],
   },
   {
     id: 'afay',
@@ -181,5 +321,33 @@ export const marketplaceAgents: MarketplaceAgent[] = [
     price: '89€/mois',
     category: 'Ressources Humaines',
     description: 'Recrutement et gestion des ressources humaines',
+    detailedDescription: 'AFAY modernise votre gestion des ressources humaines avec l\'automatisation intelligente. Du recrutement à l\'onboarding, de la gestion des talents à l\'engagement des employés, AFAY vous aide à construire une équipe performante et épanouie.',
+    features: [
+      {
+        id: 'afay-feature-1',
+        title: 'Recrutement automatisé',
+        description: 'AFAY tri et qualifie automatiquement les candidatures, planifie les entretiens et envoie les communications personnalisées aux candidats.',
+      },
+      {
+        id: 'afay-feature-2',
+        title: 'Onboarding personnalisé',
+        description: 'Créez des parcours d\'intégration sur-mesure pour chaque nouveau collaborateur avec un suivi automatisé et des contenus adaptatifs.',
+      },
+      {
+        id: 'afay-feature-3',
+        title: 'Gestion des performances',
+        description: 'Suivez les objectifs, organisez les feedbacks réguliers et identifiez les opportunités de développement pour chaque employé.',
+      },
+      {
+        id: 'afay-feature-4',
+        title: 'Analyse du bien-être',
+        description: 'AFAY mesure l\'engagement et le bien-être de vos équipes avec des sondages intelligents et vous alerte sur les risques de turnover.',
+      },
+      {
+        id: 'afay-feature-5',
+        title: 'Gestion administrative automatisée',
+        description: 'Automatisez la gestion des congés, des notes de frais, des documents RH et toutes les tâches administratives chronophages.',
+      },
+    ],
   },
 ];

@@ -168,10 +168,12 @@ export const AgentDetailPage: React.FC<AgentDetailPageProps> = ({
           gap: { xs: 4, md: 8 },
           alignItems: 'start',
           pt: { xs: 8, md: 4 },
+          position: 'relative',
+          zIndex: 1,
         }}
       >
         {/* Left Side - Details */}
-        <Box sx={{ order: { xs: 2, md: 1 } }}>
+        <Box sx={{ order: { xs: 2, md: 1 }, position: 'relative', zIndex: 1 }}>
           {/* Title */}
           <Typography
             variant="h3"
@@ -431,15 +433,18 @@ export const AgentDetailPage: React.FC<AgentDetailPageProps> = ({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'start',
-            position: { xs: 'relative', md: 'sticky' },
-            top: { md: 30 },
+            position: { xs: 'relative', md: 'fixed' },
+            right: { md: '5%' },
+            top: { md: '120px' },
+            width: { md: 'calc(50% - 80px)' },
+            maxWidth: { md: '530px' },
           }}
         >
           <Box
             sx={{
               width: '100%',
-              maxWidth: '500px',
-              aspectRatio: '1',
+              maxWidth: '530px',
+              height: { xs: 'auto', md: '530px' },
               borderRadius: '40px',
               background: agentColor.primary,
               position: 'relative',
