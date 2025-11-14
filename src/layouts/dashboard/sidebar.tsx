@@ -175,6 +175,8 @@ export function Sidebar() {
                   component={Link}
                   href={item.path}
                   sx={{
+                    position: 'relative',
+                    overflow: 'hidden',
                     borderRadius: '12px',
                     background: isActive
                       ? 'rgba(93, 49, 248, 0.25)'
@@ -183,7 +185,7 @@ export function Sidebar() {
                     WebkitBackdropFilter: 'blur(12px)',
                     border: isActive ? '1px solid rgba(93, 49, 248, 0.4)' : '1px solid rgba(255, 255, 255, 0.05)',
                     color: '#FFF',
-                    boxShadow: isActive ? '0 4px 16px rgba(93, 49, 248, 0.3)' : 'none',
+                    boxShadow: isActive ? '0 4px 12px rgba(93, 49, 248, 0.2)' : '0 2px 4px rgba(0, 0, 0, 0.05)',
                     '&:hover': {
                       background: isActive
                         ? 'rgba(93, 49, 248, 0.35)'
@@ -191,7 +193,8 @@ export function Sidebar() {
                       backdropFilter: 'blur(16px)',
                       WebkitBackdropFilter: 'blur(16px)',
                       border: '1px solid rgba(93, 49, 248, 0.3)',
-                      transform: 'translateX(4px)',
+                      transform: 'scale(1.05)',
+                      boxShadow: '0 6px 16px rgba(93, 49, 248, 0.25)',
                       '& .MuiListItemIcon-root': {
                         color: '#A855F7',
                         transform: 'scale(1.1)',
@@ -199,6 +202,12 @@ export function Sidebar() {
                       '& .MuiListItemText-primary': {
                         color: '#A855F7',
                       },
+                      '& .shine-effect': {
+                        transform: 'translateX(100%)',
+                      },
+                    },
+                    '&:active': {
+                      transform: 'scale(0.95)',
                     },
                     py: 1.5,
                     px: 2,
@@ -210,6 +219,8 @@ export function Sidebar() {
                       color: isActive ? '#A855F7' : 'rgba(255, 255, 255, 0.7)',
                       minWidth: 40,
                       transition: 'all 0.3s ease',
+                      position: 'relative',
+                      zIndex: 10,
                     }}
                   >
                     <FontAwesomeIcon
@@ -221,6 +232,8 @@ export function Sidebar() {
                     <ListItemText
                       primary={item.title}
                       sx={{
+                        position: 'relative',
+                        zIndex: 10,
                         '& .MuiListItemText-primary': {
                           fontFamily: 'var(--font-primary)',
                           fontWeight: isActive ? 600 : 500,
@@ -231,6 +244,18 @@ export function Sidebar() {
                       }}
                     />
                   )}
+
+                  {/* Shine animation effect */}
+                  <Box
+                    className="shine-effect"
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                      transform: 'translateX(-100%)',
+                      transition: 'transform 0.7s ease-out',
+                    }}
+                  />
                 </ListItemButton>
               </ListItem>
             );
@@ -259,6 +284,8 @@ export function Sidebar() {
                   component={Link}
                   href={item.path}
                   sx={{
+                    position: 'relative',
+                    overflow: 'hidden',
                     borderRadius: '12px',
                     background: isActive
                       ? 'rgba(93, 49, 248, 0.25)'
@@ -267,7 +294,7 @@ export function Sidebar() {
                     WebkitBackdropFilter: 'blur(12px)',
                     border: isActive ? '1px solid rgba(93, 49, 248, 0.4)' : '1px solid rgba(255, 255, 255, 0.05)',
                     color: '#FFF',
-                    boxShadow: isActive ? '0 4px 16px rgba(93, 49, 248, 0.3)' : 'none',
+                    boxShadow: isActive ? '0 4px 12px rgba(93, 49, 248, 0.2)' : '0 2px 4px rgba(0, 0, 0, 0.05)',
                     '&:hover': {
                       background: isActive
                         ? 'rgba(93, 49, 248, 0.35)'
@@ -275,7 +302,8 @@ export function Sidebar() {
                       backdropFilter: 'blur(16px)',
                       WebkitBackdropFilter: 'blur(16px)',
                       border: '1px solid rgba(93, 49, 248, 0.3)',
-                      transform: 'translateX(4px)',
+                      transform: 'scale(1.05)',
+                      boxShadow: '0 6px 16px rgba(93, 49, 248, 0.25)',
                       '& .MuiListItemIcon-root': {
                         color: '#A855F7',
                         transform: 'scale(1.1)',
@@ -283,6 +311,12 @@ export function Sidebar() {
                       '& .MuiListItemText-primary': {
                         color: '#A855F7',
                       },
+                      '& .shine-effect': {
+                        transform: 'translateX(100%)',
+                      },
+                    },
+                    '&:active': {
+                      transform: 'scale(0.95)',
                     },
                     py: 1.5,
                     px: 2,
@@ -294,6 +328,8 @@ export function Sidebar() {
                       color: isActive ? '#A855F7' : 'rgba(255, 255, 255, 0.7)',
                       minWidth: 40,
                       transition: 'all 0.3s ease',
+                      position: 'relative',
+                      zIndex: 10,
                     }}
                   >
                     <FontAwesomeIcon
@@ -305,6 +341,8 @@ export function Sidebar() {
                     <ListItemText
                       primary={item.title}
                       sx={{
+                        position: 'relative',
+                        zIndex: 10,
                         '& .MuiListItemText-primary': {
                           fontFamily: 'var(--font-primary)',
                           fontWeight: isActive ? 600 : 500,
@@ -315,6 +353,18 @@ export function Sidebar() {
                       }}
                     />
                   )}
+
+                  {/* Shine animation effect */}
+                  <Box
+                    className="shine-effect"
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                      transform: 'translateX(-100%)',
+                      transition: 'transform 0.7s ease-out',
+                    }}
+                  />
                 </ListItemButton>
               </ListItem>
             );
