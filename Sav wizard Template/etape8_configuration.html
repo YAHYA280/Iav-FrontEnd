@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 8/9 - Configuration opérationnelle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #c026d3;
+            --primary-light: #e879f9;
+            --primary-dark: #a21caf;
+            --secondary-color: #7c3aed;
+            --bg-primary: #1a0b2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: #3d2761;
+            --bg-input: #2a1a4a;
+            --text-primary: #ffffff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #9333ea;
+            --border-color: #6d28d9;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .wizard-container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 48px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .wizard-header {
+            margin-bottom: 32px;
+        }
+
+        .wizard-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wizard-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .language-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .language-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .language-card.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.2), rgba(124, 58, 237, 0.2));
+        }
+
+        .hours-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .hours-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .hours-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(192, 38, 211, 0.3);
+        }
+
+        .hours-card.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.2), rgba(124, 58, 237, 0.2));
+            box-shadow: 0 0 0 4px rgba(192, 38, 211, 0.2);
+        }
+
+        .hours-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .hours-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .hours-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .custom-hours-section {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 32px;
+            display: none;
+        }
+
+        .custom-hours-section.active {
+            display: block;
+        }
+
+        .schedule-item {
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .schedule-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .btn-delete-schedule {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-delete-schedule:hover {
+            background: #dc2626;
+        }
+
+        .days-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .day-btn {
+            padding: 10px 16px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .day-btn:hover {
+            border-color: var(--primary-light);
+        }
+
+        .day-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .time-inputs {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .time-group {
+            flex: 1;
+        }
+
+        .time-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .time-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .time-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+        }
+
+        .btn-add-schedule {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add-schedule:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 12px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1 class="wizard-title">⚙️ Configuration opérationnelle</h1>
+            <p class="wizard-subtitle">Définissez les paramètres de fonctionnement de votre agent</p>
+        </div>
+
+        <!-- Langues supportées -->
+        <div class="section-title">Langues supportées <span class="required">*</span></div>
+        <div class="languages-grid">
+            <div class="language-card selected" onclick="toggleLanguage(this)">
+                <div>🇫🇷 Français</div>
+            </div>
+            <div class="language-card" onclick="toggleLanguage(this)">
+                <div>🇬🇧 English</div>
+            </div>
+            <div class="language-card" onclick="toggleLanguage(this)">
+                <div>🇲🇦 العربية</div>
+            </div>
+            <div class="language-card" onclick="toggleLanguage(this)">
+                <div>🇪🇸 Español</div>
+            </div>
+            <div class="language-card" onclick="toggleLanguage(this)">
+                <div>🇩🇪 Deutsch</div>
+            </div>
+            <div class="language-card" onclick="toggleLanguage(this)">
+                <div>🇮🇹 Italiano</div>
+            </div>
+        </div>
+
+        <!-- Horaires de disponibilité -->
+        <div class="section-title">Horaires de disponibilité <span class="required">*</span></div>
+        <div class="hours-grid">
+            <div class="hours-card" onclick="selectHours(this, '24/7')">
+                <div class="hours-icon">🌐</div>
+                <div class="hours-title">24h/24, 7j/7</div>
+            </div>
+
+            <div class="hours-card" onclick="selectHours(this, 'business')">
+                <div class="hours-icon">🏢</div>
+                <div class="hours-title">Heures bureau (9h-18h)</div>
+            </div>
+
+            <div class="hours-card selected" onclick="selectHours(this, 'custom')">
+                <div class="hours-icon">⚡</div>
+                <div class="hours-title">Personnalisé</div>
+            </div>
+        </div>
+
+        <!-- Section créneaux personnalisés -->
+        <div class="custom-hours-section active" id="customHoursSection">
+            <div class="section-title">Définir les créneaux horaires personnalisés</div>
+            
+            <div id="schedulesList">
+                <div class="schedule-item">
+                    <div class="schedule-header">
+                        <div class="schedule-title">Créneau 1</div>
+                        <button class="btn-delete-schedule" onclick="deleteSchedule(this)">🗑️ Supprimer</button>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 10px;">Jours de la semaine</div>
+                        <div class="days-selector">
+                            <div class="day-btn active" onclick="toggleDay(this)">Lun</div>
+                            <div class="day-btn active" onclick="toggleDay(this)">Mar</div>
+                            <div class="day-btn active" onclick="toggleDay(this)">Mer</div>
+                            <div class="day-btn active" onclick="toggleDay(this)">Jeu</div>
+                            <div class="day-btn active" onclick="toggleDay(this)">Ven</div>
+                            <div class="day-btn" onclick="toggleDay(this)">Sam</div>
+                            <div class="day-btn" onclick="toggleDay(this)">Dim</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 10px;">Heures d'ouverture</div>
+                    <div class="time-inputs">
+                        <div class="time-group">
+                            <label class="time-label">De</label>
+                            <input type="time" class="time-input" value="09:00">
+                        </div>
+                        <div style="font-size: 20px; padding-top: 20px;">à</div>
+                        <div class="time-group">
+                            <label class="time-label">À</label>
+                            <input type="time" class="time-input" value="18:00">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-add-schedule" onclick="addSchedule()">+ Ajouter un créneau</button>
+        </div>
+
+        <div class="wizard-actions">
+            <button class="btn btn-secondary">← Précédent</button>
+            <button class="btn btn-primary">Suivant →</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleLanguage(element) {
+            element.classList.toggle('selected');
+        }
+
+        function selectHours(element, type) {
+            const allCards = document.querySelectorAll('.hours-card');
+            allCards.forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+
+            const customSection = document.getElementById('customHoursSection');
+            if (type === 'custom') {
+                customSection.classList.add('active');
+            } else {
+                customSection.classList.remove('active');
+            }
+        }
+
+        function toggleDay(element) {
+            element.classList.toggle('active');
+        }
+
+        function deleteSchedule(button) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce créneau ?')) {
+                button.closest('.schedule-item').remove();
+            }
+        }
+
+        function addSchedule() {
+            const schedulesList = document.getElementById('schedulesList');
+            const scheduleCount = schedulesList.querySelectorAll('.schedule-item').length + 1;
+            
+            const scheduleItem = document.createElement('div');
+            scheduleItem.className = 'schedule-item';
+            scheduleItem.innerHTML = `
+                <div class="schedule-header">
+                    <div class="schedule-title">Créneau ${scheduleCount}</div>
+                    <button class="btn-delete-schedule" onclick="deleteSchedule(this)">🗑️ Supprimer</button>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 10px;">Jours de la semaine</div>
+                    <div class="days-selector">
+                        <div class="day-btn" onclick="toggleDay(this)">Lun</div>
+                        <div class="day-btn" onclick="toggleDay(this)">Mar</div>
+                        <div class="day-btn" onclick="toggleDay(this)">Mer</div>
+                        <div class="day-btn" onclick="toggleDay(this)">Jeu</div>
+                        <div class="day-btn" onclick="toggleDay(this)">Ven</div>
+                        <div class="day-btn" onclick="toggleDay(this)">Sam</div>
+                        <div class="day-btn" onclick="toggleDay(this)">Dim</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 14px; font-weight: 600; margin-bottom: 10px;">Heures d'ouverture</div>
+                <div class="time-inputs">
+                    <div class="time-group">
+                        <label class="time-label">De</label>
+                        <input type="time" class="time-input" value="09:00">
+                    </div>
+                    <div style="font-size: 20px; padding-top: 20px;">à</div>
+                    <div class="time-group">
+                        <label class="time-label">À</label>
+                        <input type="time" class="time-input" value="18:00">
+                    </div>
+                </div>
+            `;
+            
+            schedulesList.appendChild(scheduleItem);
+        }
+    </script>
+</body>
+</html>

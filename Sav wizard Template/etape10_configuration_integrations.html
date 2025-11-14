@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 10/10 - Configuration des intégrations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #c026d3;
+            --primary-light: #e879f9;
+            --primary-dark: #a21caf;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --bg-primary: #1a0b2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: #3d2761;
+            --bg-input: #2a1a4a;
+            --text-primary: #ffffff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #9333ea;
+            --border-color: #6d28d9;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .wizard-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 48px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .wizard-header {
+            margin-bottom: 32px;
+        }
+
+        .wizard-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wizard-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 12px 12px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab:hover {
+            border-color: var(--primary-light);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-color: var(--primary-color);
+        }
+
+        .tab-icon {
+            font-size: 20px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .guide-card {
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.15), rgba(124, 58, 237, 0.15));
+            border: 2px solid var(--primary-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 32px;
+        }
+
+        .guide-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .guide-icon {
+            font-size: 28px;
+        }
+
+        .guide-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .guide-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .guide-steps {
+            list-style: none;
+        }
+
+        .guide-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: 12px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .step-code {
+            background: var(--bg-input);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: var(--primary-light);
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        .doc-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 16px;
+            padding: 10px 16px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .doc-link:hover {
+            background: var(--bg-input);
+            transform: translateX(4px);
+        }
+
+        .form-section {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(192, 38, 211, 0.2);
+        }
+
+        .form-help {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .btn-test {
+            background: var(--success-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-test:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 12px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1 class="wizard-title">🔧 Étape 8/8 - Configuration des intégrations</h1>
+            <p class="wizard-subtitle">Configurez les intégrations que vous avez sélectionnées</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <div class="tab active" onclick="switchTab('freshdesk')">
+                <div class="tab-icon">📋</div>
+                <div>Freshdesk</div>
+            </div>
+            <div class="tab" onclick="switchTab('whatsapp')">
+                <div class="tab-icon">💬</div>
+                <div>WhatsApp Business</div>
+            </div>
+        </div>
+
+        <!-- Freshdesk Tab Content -->
+        <div class="tab-content active" id="freshdesk">
+            <div class="guide-card">
+                <div class="guide-header">
+                    <div class="guide-icon">📋</div>
+                    <div class="guide-title">Guide de configuration Freshdesk</div>
+                </div>
+
+                <div class="guide-description">
+                    Pour connecter votre compte Freshdesk à IAVIA, vous aurez besoin de votre domaine Freshdesk et d'une clé API.
+                </div>
+
+                <ul class="guide-steps">
+                    <li class="guide-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-text">Connectez-vous à votre compte Freshdesk</div>
+                        </div>
+                    </li>
+
+                    <li class="guide-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-text">Accédez à <strong>Profil > Paramètres de profil</strong></div>
+                        </div>
+                    </li>
+
+                    <li class="guide-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-text">Dans la section <strong>Clé API</strong>, copiez votre clé ou générez-en une nouvelle</div>
+                        </div>
+                    </li>
+
+                    <li class="guide-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <div class="step-text">Collez votre domaine et votre clé API dans les champs ci-dessous</div>
+                        </div>
+                    </li>
+                </ul>
+
+                <a href="#" class="doc-link">
+                    <span>📚</span>
+                    <span>Voir la documentation complète</span>
+                </a>
+            </div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label class="form-label">Domaine Freshdesk <span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="votreentreprise.freshdesk.com">
+                    <div class="form-help">Votre domaine Freshdesk (sans https://)</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Clé API Freshdesk <span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="xxxxxxxxxxxxxxxxxxxx">
+                    <div class="form-help">Trouvez votre clé API dans Profil > Paramètres de votre compte Freshdesk</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Groupe par défaut (optionnel)</label>
+                    <select class="form-select">
+                        <option>Aucun groupe spécifique</option>
+                        <option>Support Technique</option>
+                        <option>Service Client</option>
+                        <option>Facturation</option>
+                    </select>
+                    <div class="form-help">Les tickets créés par l'agent seront assignés à ce groupe</div>
+                </div>
+
+                <button class="btn-test">✓ Tester la connexion</button>
+            </div>
+        </div>
+
+        <!-- WhatsApp Tab Content -->
+        <div class="tab-content" id="whatsapp">
+            <div class="guide-card">
+                <div class="guide-header">
+                    <div class="guide-icon">💬</div>
+                    <div class="guide-title">Guide de configuration WhatsApp Business</div>
+                </div>
+
+                <div class="guide-description">
+                    Pour connecter WhatsApp Business à IAVIA, vous devez créer une application Meta et obtenir vos identifiants API.
+                </div>
+
+                <ul class="guide-steps">
+                    <li class="guide-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-text">Créez une application sur <strong>Meta for Developers</strong></div>
+                        </div>
+                    </li>
+
+                    <li class="guide-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-text">Activez <strong>WhatsApp Business API</strong> dans votre application</div>
+                        </div>
+                    </li>
+
+                    <li class="guide-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-text">Récupérez votre <strong>Phone Number ID</strong>, <strong>WhatsApp Business Account ID</strong> et <strong>Access Token</strong></div>
+                        </div>
+                    </li>
+
+                    <li class="guide-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <div class="step-text">Configurez le webhook avec l'URL fournie par IAVIA</div>
+                        </div>
+                    </li>
+                </ul>
+
+                <a href="#" class="doc-link">
+                    <span>📚</span>
+                    <span>Voir la documentation complète</span>
+                </a>
+            </div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label class="form-label">Phone Number ID <span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="123456789012345">
+                    <div class="form-help">ID du numéro de téléphone WhatsApp Business</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">WhatsApp Business Account ID <span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="987654321098765">
+                    <div class="form-help">ID de votre compte WhatsApp Business</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Access Token <span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="EAAxxxxxxxxxxxxxxxxxxxxxxxxx">
+                    <div class="form-help">Token d'accès permanent généré depuis Meta for Developers</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Webhook Verify Token <span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="mon_token_secret_123">
+                    <div class="form-help">Token de vérification pour sécuriser votre webhook</div>
+                </div>
+
+                <button class="btn-test">✓ Tester la connexion</button>
+            </div>
+        </div>
+
+        <div class="wizard-actions">
+            <button class="btn btn-secondary">← Précédent</button>
+            <button class="btn btn-primary">🎉 Créer l'agent</button>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

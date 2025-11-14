@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 3/8 - Objectifs prioritaires</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #c026d3;
+            --primary-light: #e879f9;
+            --primary-dark: #a21caf;
+            --secondary-color: #7c3aed;
+            --bg-primary: #1a0b2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: #3d2761;
+            --bg-input: #2a1a4a;
+            --text-primary: #ffffff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #9333ea;
+            --border-color: #6d28d9;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .wizard-container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 48px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .wizard-header {
+            margin-bottom: 16px;
+        }
+
+        .wizard-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wizard-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .objectives-container {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .objective-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+        }
+
+        .objective-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .objective-item:hover {
+            background: rgba(192, 38, 211, 0.1);
+        }
+
+        .objective-item.selected {
+            background: rgba(192, 38, 211, 0.2);
+            border: 2px solid var(--primary-color);
+        }
+
+        .objective-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .objective-item.selected .objective-checkbox {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .objective-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .objective-content {
+            flex: 1;
+        }
+
+        .objective-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .objective-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 12px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1 class="wizard-title">🍎 Étape 2/8 - Quels sont vos objectifs prioritaires ?</h1>
+            <p class="wizard-subtitle">Sélectionnez les 3 objectifs les plus importants pour vous</p>
+        </div>
+
+        <div class="objectives-container">
+            <div class="objective-item" onclick="toggleObjective(this)">
+                <div class="objective-checkbox"></div>
+                <div class="objective-icon">⚡</div>
+                <div class="objective-content">
+                    <div class="objective-title">Réduire le temps de réponse</div>
+                    <div class="objective-description">Répondre instantanément aux clients 24/7</div>
+                </div>
+            </div>
+
+            <div class="objective-item" onclick="toggleObjective(this)">
+                <div class="objective-checkbox"></div>
+                <div class="objective-icon">🔄</div>
+                <div class="objective-content">
+                    <div class="objective-title">Automatiser les tâches répétitives</div>
+                    <div class="objective-description">Gérer automatiquement les demandes courantes</div>
+                </div>
+            </div>
+
+            <div class="objective-item" onclick="toggleObjective(this)">
+                <div class="objective-checkbox"></div>
+                <div class="objective-icon">⭐</div>
+                <div class="objective-content">
+                    <div class="objective-title">Améliorer la satisfaction client</div>
+                    <div class="objective-description">Offrir une expérience client exceptionnelle</div>
+                </div>
+            </div>
+
+            <div class="objective-item" onclick="toggleObjective(this)">
+                <div class="objective-checkbox"></div>
+                <div class="objective-icon">💰</div>
+                <div class="objective-content">
+                    <div class="objective-title">Réduire les coûts opérationnels</div>
+                    <div class="objective-description">Optimiser les ressources de votre équipe</div>
+                </div>
+            </div>
+
+            <div class="objective-item" onclick="toggleObjective(this)">
+                <div class="objective-checkbox"></div>
+                <div class="objective-icon">🎫</div>
+                <div class="objective-content">
+                    <div class="objective-title">Améliorer la gestion des tickets</div>
+                    <div class="objective-description">Centraliser et organiser les demandes clients</div>
+                </div>
+            </div>
+
+            <div class="objective-item" onclick="toggleObjective(this)">
+                <div class="objective-checkbox"></div>
+                <div class="objective-icon">🌐</div>
+                <div class="objective-content">
+                    <div class="objective-title">Assurer une disponibilité 24/7</div>
+                    <div class="objective-description">Être présent pour vos clients à tout moment</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-actions">
+            <button class="btn btn-secondary">← Précédent</button>
+            <button class="btn btn-primary">Suivant →</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleObjective(element) {
+            const selected = document.querySelectorAll('.objective-item.selected');
+            
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+            } else if (selected.length < 3) {
+                element.classList.add('selected');
+            } else {
+                alert('Vous ne pouvez sélectionner que 3 objectifs maximum');
+            }
+        }
+    </script>
+</body>
+</html>

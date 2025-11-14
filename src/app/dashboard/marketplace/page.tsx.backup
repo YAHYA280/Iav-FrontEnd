@@ -9,15 +9,10 @@ import { MarketplaceCard } from '@/shared/components/ui/marketplace-card';
 import { AgentDetailPage } from '@/shared/components/ui/agent-detail-page';
 import DarkVeil from '@/shared/components/backgrounds/DarkVeil';
 import { marketplaceAgents, MarketplaceAgent } from '@/shared/_mock/marketplace-agents';
-import { ItriWizard } from '@/shared/components/wizard/itri-wizard';
-import type { WizardData } from '@/shared/types/wizard';
-
-type ViewState = 'marketplace' | 'detail' | 'wizard';
 
 export default function MarketplacePage() {
   const { setTitle } = useInterfaceTitle();
   const [selectedAgent, setSelectedAgent] = useState<MarketplaceAgent | null>(null);
-  const [viewState, setViewState] = useState<ViewState>('marketplace');
 
   useEffect(() => {
     setTitle('Marketplace');
@@ -32,31 +27,10 @@ export default function MarketplacePage() {
 
   const handleAgentClick = (agent: MarketplaceAgent) => {
     setSelectedAgent(agent);
-    setViewState('detail');
   };
 
   const handleBack = () => {
     setSelectedAgent(null);
-    setViewState('marketplace');
-  };
-
-  const handleTryFree = () => {
-    if (selectedAgent?.id === 'itri') {
-      setViewState('wizard');
-    } else {
-      console.log('Wizard not available for this agent yet');
-    }
-  };
-
-  const handleWizardBack = () => {
-    setViewState('detail');
-  };
-
-  const handleWizardComplete = (data: WizardData) => {
-    console.log('Wizard completed with data:', data);
-    setViewState('marketplace');
-    setSelectedAgent(null);
-    // TODO: Handle wizard completion (e.g., save data, navigate to agent page)
   };
 
   return (
@@ -69,10 +43,10 @@ export default function MarketplacePage() {
         }}
       >
         {/* Galaxy Background - Always visible */}
-        {viewState !== 'wizard' && <GalaxyBackground enableParallax />}
+        <GalaxyBackground enableParallax />
 
-        {/* DarkVeil Background - Only visible on agent detail */}
-        {selectedAgent && viewState === 'detail' && (
+        {/* DarkVeil Background - Only visible on agent detail, layered on top of galaxy */}
+        {selectedAgent && (
           <Box
             sx={{
               position: 'fixed',
@@ -93,8 +67,8 @@ export default function MarketplacePage() {
           </Box>
         )}
 
-        {/* Conditional Rendering based on view state */}
-        {viewState === 'marketplace' && (
+        {/* Conditional Rendering: Show either marketplace grid or agent detail */}
+        {!selectedAgent ? (
           /* Marketplace Grid */
           <Container
             maxWidth="xl"
@@ -146,9 +120,7 @@ export default function MarketplacePage() {
               ))}
             </Grid>
           </Container>
-        )}
-
-        {viewState === 'detail' && selectedAgent && (
+        ) : (
           /* Agent Detail Page */
           <Box
             sx={{
@@ -166,14 +138,8 @@ export default function MarketplacePage() {
               }
               features={selectedAgent.features || []}
               onBack={handleBack}
-              onTryFree={handleTryFree}
             />
           </Box>
-        )}
-
-        {viewState === 'wizard' && selectedAgent?.id === 'itri' && (
-          /* Wizard Page */
-          <ItriWizard onBack={handleWizardBack} onComplete={handleWizardComplete} />
         )}
       </Box>
     </AgentThemeProvider>

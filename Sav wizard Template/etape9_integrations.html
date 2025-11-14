@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 9/9 - Sélectionnez vos intégrations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #c026d3;
+            --primary-light: #e879f9;
+            --primary-dark: #a21caf;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --bg-primary: #1a0b2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: #3d2761;
+            --bg-input: #2a1a4a;
+            --text-primary: #ffffff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #9333ea;
+            --border-color: #6d28d9;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .wizard-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 48px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .wizard-header {
+            margin-bottom: 32px;
+        }
+
+        .wizard-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wizard-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .category-icon {
+            font-size: 24px;
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .integrations-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .integration-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .integration-card:hover {
+            border-color: var(--primary-light);
+            transform: translateX(4px);
+        }
+
+        .integration-card.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.15), rgba(124, 58, 237, 0.15));
+        }
+
+        .integration-icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background: var(--bg-input);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            border: 2px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .integration-info {
+            flex: 1;
+        }
+
+        .integration-name {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .integration-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .integration-badge {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        .checkbox-wrapper {
+            width: 28px;
+            height: 28px;
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .integration-card.selected .checkbox-wrapper {
+            background: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .integration-card.selected .checkbox-wrapper::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 12px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1 class="wizard-title">🔗 Sélectionnez vos intégrations</h1>
+            <p class="wizard-subtitle">Connectez les outils que votre agent utilisera</p>
+        </div>
+
+        <!-- Canaux de communication -->
+        <div class="category-section">
+            <div class="category-header">
+                <div class="category-icon">📱</div>
+                <div class="category-title">Canaux de communication</div>
+            </div>
+
+            <div class="integrations-grid">
+                <div class="integration-card" onclick="toggleIntegration(this)">
+                    <div class="integration-icon-wrapper">💬</div>
+                    <div class="integration-info">
+                        <div class="integration-name">WhatsApp Business</div>
+                        <div class="integration-description">Communiquez avec vos clients via WhatsApp</div>
+                    </div>
+                    <div class="checkbox-wrapper"></div>
+                </div>
+
+                <div class="integration-card" onclick="toggleIntegration(this)">
+                    <div class="integration-icon-wrapper">📘</div>
+                    <div class="integration-info">
+                        <div class="integration-name">Facebook Messenger</div>
+                        <div class="integration-description">Intégrez votre page Facebook</div>
+                    </div>
+                    <div class="checkbox-wrapper"></div>
+                </div>
+
+                <div class="integration-card" onclick="toggleIntegration(this)">
+                    <div class="integration-icon-wrapper">✈️</div>
+                    <div class="integration-info">
+                        <div class="integration-name">Telegram</div>
+                        <div class="integration-description">Connectez votre bot Telegram</div>
+                    </div>
+                    <div class="checkbox-wrapper"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Systèmes de ticketing -->
+        <div class="category-section">
+            <div class="category-header">
+                <div class="category-icon">🎫</div>
+                <div class="category-title">Systèmes de ticketing</div>
+            </div>
+
+            <div class="integrations-grid">
+                <div class="integration-card" onclick="toggleIntegration(this)">
+                    <div class="integration-icon-wrapper">📋</div>
+                    <div class="integration-info">
+                        <div class="integration-name">
+                            Freshdesk
+                            <span class="integration-badge">Populaire</span>
+                        </div>
+                        <div class="integration-description">Synchronisez vos tickets Freshdesk</div>
+                    </div>
+                    <div class="checkbox-wrapper"></div>
+                </div>
+
+                <div class="integration-card" onclick="toggleIntegration(this)">
+                    <div class="integration-icon-wrapper">📊</div>
+                    <div class="integration-info">
+                        <div class="integration-name">Zendesk</div>
+                        <div class="integration-description">Intégrez Zendesk Support</div>
+                    </div>
+                    <div class="checkbox-wrapper"></div>
+                </div>
+
+                <div class="integration-card" onclick="toggleIntegration(this)">
+                    <div class="integration-icon-wrapper">🔵</div>
+                    <div class="integration-info">
+                        <div class="integration-name">Jira Service Management</div>
+                        <div class="integration-description">Gérez les tickets techniques avec Jira</div>
+                    </div>
+                    <div class="checkbox-wrapper"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- E-commerce & CRM -->
+        <div class="category-section">
+            <div class="category-header">
+                <div class="category-icon">🛒</div>
+                <div class="category-title">E-commerce & CRM</div>
+            </div>
+
+            <div class="integrations-grid">
+                <div class="integration-card" onclick="toggleIntegration(this)">
+                    <div class="integration-icon-wrapper">🛍️</div>
+                    <div class="integration-info">
+                        <div class="integration-name">
+                            Shopify
+                            <span class="integration-badge">Populaire</span>
+                        </div>
+                        <div class="integration-description">Accès aux commandes et produits</div>
+                    </div>
+                    <div class="checkbox-wrapper"></div>
+                </div>
+
+                <div class="integration-card" onclick="toggleIntegration(this)">
+                    <div class="integration-icon-wrapper">🛒</div>
+                    <div class="integration-info">
+                        <div class="integration-name">WooCommerce</div>
+                        <div class="integration-description">Synchronisez votre boutique WordPress</div>
+                    </div>
+                    <div class="checkbox-wrapper"></div>
+                </div>
+
+                <div class="integration-card" onclick="toggleIntegration(this)">
+                    <div class="integration-icon-wrapper">🎯</div>
+                    <div class="integration-info">
+                        <div class="integration-name">HubSpot CRM</div>
+                        <div class="integration-description">Accès à vos contacts et deals</div>
+                    </div>
+                    <div class="checkbox-wrapper"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-actions">
+            <button class="btn btn-secondary">← Précédent</button>
+            <button class="btn btn-primary">Suivant →</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleIntegration(card) {
+            card.classList.toggle('selected');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Activation Agent Service Client & SAV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #c026d3;
+            --primary-light: #e879f9;
+            --primary-dark: #a21caf;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --bg-primary: #1a0b2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: #3d2761;
+            --bg-input: #2a1a4a;
+            --text-primary: #ffffff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #9333ea;
+            --border-color: #6d28d9;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .wizard-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 32px 48px;
+            text-align: center;
+        }
+
+        .wizard-main-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .wizard-main-subtitle {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: var(--bg-secondary);
+            padding: 32px 48px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--border-color);
+            z-index: 0;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.4s ease;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .progress-step:hover .step-circle {
+            transform: scale(1.1);
+        }
+
+        .step-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .progress-step.active .step-circle {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(192, 38, 211, 0.3);
+        }
+
+        .progress-step.completed .step-circle {
+            background: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .progress-step.completed .step-circle::after {
+            content: '✓';
+        }
+
+        .step-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 120px;
+        }
+
+        .progress-step.active .step-label {
+            color: var(--primary-light);
+        }
+
+        /* Content */
+        .wizard-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-header {
+            margin-bottom: 40px;
+        }
+
+        .content-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        /* Option Grid */
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .option-grid.grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .option-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .option-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(192, 38, 211, 0.3);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.2), rgba(124, 58, 237, 0.2));
+            box-shadow: 0 0 0 4px rgba(192, 38, 211, 0.2);
+        }
+
+        .option-icon {
+            font-size: 40px;
+            margin-bottom: 14px;
+        }
+
+        .option-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .option-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Objectives */
+        .objectives-container {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .objective-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+        }
+
+        .objective-item:hover {
+            background: rgba(192, 38, 211, 0.1);
+        }
+
+        .objective-item.selected {
+            background: rgba(192, 38, 211, 0.2);
+            border: 2px solid var(--primary-color);
+        }
+
+        .objective-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .objective-item.selected .objective-checkbox {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .objective-item.selected .objective-checkbox::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        .objective-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .objective-content {
+            flex: 1;
+        }
+
+        .objective-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .objective-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.15), rgba(124, 58, 237, 0.15));
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-icon {
+            font-size: 24px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Tone Cards */
+        .tone-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        /* FAQ */
+        .btn-add {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .faq-list {
+            margin-bottom: 32px;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .faq-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .faq-question-display {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            padding-right: 16px;
+        }
+
+        .faq-answer-display {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .faq-category {
+            display: inline-block;
+            background: rgba(192, 38, 211, 0.2);
+            color: var(--primary-light);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        .add-faq-section {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .add-faq-section.active {
+            display: block;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(192, 38, 211, 0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            background: #059669;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--primary-light);
+        }
+
+        /* Notifications */
+        .notification-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .notification-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-icon {
+            font-size: 28px;
+        }
+
+        .notification-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .notification-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 56px;
+            height: 28px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 28px;
+        }
+
+        .channels-section {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .notification-card.active .channels-section {
+            display: block;
+        }
+
+        .channel-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .channel-tab {
+            padding: 10px 20px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .channel-tab:hover {
+            border-color: var(--primary-light);
+        }
+
+        .channel-tab.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-color: var(--primary-color);
+        }
+
+        .channel-content {
+            display: none;
+        }
+
+        .channel-content.active {
+            display: block;
+        }
+
+        /* Configuration */
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .language-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .language-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .language-card.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.2), rgba(124, 58, 237, 0.2));
+        }
+
+        /* Navigation Buttons */
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 2px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 12px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-light);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .option-grid, .tone-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .progress-steps {
+                overflow-x: auto;
+                padding-bottom: 16px;
+            }
+
+            .step-label {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .wizard-header {
+                padding: 24px 20px;
+            }
+
+            .progress-container {
+                padding: 24px 20px;
+            }
+
+            .wizard-content {
+                padding: 32px 20px;
+            }
+
+            .option-grid, .tone-grid, .languages-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .option-grid.grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="wizard-header">
+        <h1 class="wizard-main-title">
+            <span>🤖</span>
+            <span>Activation Agent Service Client & SAV</span>
+        </h1>
+        <p class="wizard-main-subtitle">Configurons ensemble votre assistant intelligent en quelques étapes</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-steps">
+            <div class="progress-line">
+                <div class="progress-line-fill" id="progressFill" style="width: 14%"></div>
+            </div>
+
+            <div class="progress-step active" data-step="1" onclick="goToStep(1)">
+                <div class="step-circle">1</div>
+                <div class="step-label">Contexte</div>
+            </div>
+
+            <div class="progress-step" data-step="2" onclick="goToStep(2)">
+                <div class="step-circle">2</div>
+                <div class="step-label">Objectifs</div>
+            </div>
+
+            <div class="progress-step" data-step="3" onclick="goToStep(3)">
+                <div class="step-circle">3</div>
+                <div class="step-label">Fonctionnalités</div>
+            </div>
+
+            <div class="progress-step" data-step="4" onclick="goToStep(4)">
+                <div class="step-circle">4</div>
+                <div class="step-label">Identité</div>
+            </div>
+
+            <div class="progress-step" data-step="5" onclick="goToStep(5)">
+                <div class="step-circle">5</div>
+                <div class="step-label">Configuration</div>
+            </div>
+
+            <div class="progress-step" data-step="6" onclick="goToStep(6)">
+                <div class="step-circle">6</div>
+                <div class="step-label">Intégrations</div>
+            </div>
+
+            <div class="progress-step" data-step="7" onclick="goToStep(7)">
+                <div class="step-circle">7</div>
+                <div class="step-label">Config. Intégrations</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="wizard-content">
+        <!-- Step 1: Contexte -->
+        <div class="step-content active" data-step="1">
+            <div class="content-header">
+                <h2 class="content-title">👥 Parlez-nous de votre contexte</h2>
+                <p class="content-subtitle">Ces informations nous aideront à mieux comprendre vos besoins</p>
+            </div>
+
+            <div class="section-title">Dans quel secteur opérez-vous ? <span class="required">*</span></div>
+            <div class="option-grid">
+                <div class="option-card" onclick="selectOption(this, 'ecommerce')">
+                    <div class="option-icon">🛒</div>
+                    <div class="option-title">E-commerce</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'saas')">
+                    <div class="option-icon">💼</div>
+                    <div class="option-title">SaaS</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'services')">
+                    <div class="option-icon">📞</div>
+                    <div class="option-title">Services</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'retail')">
+                    <div class="option-icon">🏪</div>
+                    <div class="option-title">Retail</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'finance')">
+                    <div class="option-icon">💰</div>
+                    <div class="option-title">Finance</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'autre')">
+                    <div class="option-icon">📦</div>
+                    <div class="option-title">Autre</div>
+                </div>
+            </div>
+
+            <div class="section-title">Taille de votre équipe support actuelle <span class="required">*</span></div>
+            <div class="option-grid grid-2">
+                <div class="option-card" onclick="selectOption(this, 'seul')">
+                    <div class="option-icon">👤</div>
+                    <div class="option-title">Seul</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, '2-5')">
+                    <div class="option-icon">👥</div>
+                    <div class="option-title">2-5 personnes</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, '6-20')">
+                    <div class="option-icon">👨‍👩‍👧‍👦</div>
+                    <div class="option-title">6-20 personnes</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, '20+')">
+                    <div class="option-icon">🏢</div>
+                    <div class="option-title">+20 personnes</div>
+                </div>
+            </div>
+
+            <div class="section-title">Volume approximatif de demandes clients par jour <span class="required">*</span></div>
+            <div class="option-grid grid-2">
+                <div class="option-card" onclick="selectOption(this, 'moins50')">
+                    <div class="option-icon">📊</div>
+                    <div class="option-title">Moins de 50</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, '50-200')">
+                    <div class="option-icon">📈</div>
+                    <div class="option-title">50-200</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, '200-500')">
+                    <div class="option-icon">📉</div>
+                    <div class="option-title">200-500</div>
+                </div>
+                <div class="option-card" onclick="selectOption(this, 'plus500')">
+                    <div class="option-icon">🚀</div>
+                    <div class="option-title">Plus de 500</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Objectifs -->
+        <div class="step-content" data-step="2">
+            <div class="content-header">
+                <h2 class="content-title">🎯 Quels sont vos objectifs prioritaires ?</h2>
+                <p class="content-subtitle">Sélectionnez les 3 objectifs les plus importants pour vous</p>
+            </div>
+
+            <div class="objectives-container">
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">⚡</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Réduire le temps de réponse</div>
+                        <div class="objective-description">Répondre instantanément aux clients 24/7</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">🔄</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Automatiser les tâches répétitives</div>
+                        <div class="objective-description">Gérer automatiquement les demandes courantes</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">⭐</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Améliorer la satisfaction client</div>
+                        <div class="objective-description">Offrir une expérience client exceptionnelle</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">💰</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Réduire les coûts opérationnels</div>
+                        <div class="objective-description">Optimiser les ressources de votre équipe</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">🎫</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Améliorer la gestion des tickets</div>
+                        <div class="objective-description">Centraliser et organiser les demandes clients</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">🌐</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Assurer une disponibilité 24/7</div>
+                        <div class="objective-description">Être présent pour vos clients à tout moment</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Fonctionnalités -->
+        <div class="step-content" data-step="3">
+            <div class="content-header">
+                <h2 class="content-title">⚙️ Sélectionnez les fonctionnalités souhaitées</h2>
+                <p class="content-subtitle">Choisissez les capacités que votre agent doit avoir</p>
+            </div>
+
+            <div class="info-box">
+                <div class="info-icon">💡</div>
+                <div class="info-text">Plus vous activez de fonctionnalités, plus votre agent sera puissant et polyvalent</div>
+            </div>
+
+            <div class="objectives-container">
+                <div class="objective-item selected" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">📋</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Collecte d'informations Client</div>
+                        <div class="objective-description">Recueillir et mettre à jour les coordonnées et préférences clients</div>
+                    </div>
+                </div>
+
+                <div class="objective-item selected" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">🙋</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Escalade vers Agent Humain</div>
+                        <div class="objective-description">Transfert intelligent vers un support humain si nécessaire</div>
+                    </div>
+                </div>
+
+                <div class="objective-item selected" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">🎫</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Gestion des Tickets</div>
+                        <div class="objective-description">Créer et suivre automatiquement les tickets pour demandes complexes</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">🔀</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Routage Intelligent</div>
+                        <div class="objective-description">Identifier l'intention et transférer vers le bon sous-agent</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">💡</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Recommandations de Produits</div>
+                        <div class="objective-description">Suggérer des produits pertinents basés sur le contexte</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">📅</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Prise de Rendez-vous</div>
+                        <div class="objective-description">Réserver, modifier et annuler des rendez-vous automatiquement</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">📦</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Suivi de Commandes</div>
+                        <div class="objective-description">Fournir le statut et les détails de livraison en temps réel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Identité (Tonalité + FAQ) -->
+        <div class="step-content" data-step="4">
+            <div class="content-header">
+                <h2 class="content-title">💬 Identité de votre agent</h2>
+                <p class="content-subtitle">Définissez le style et la base de connaissances de votre agent</p>
+            </div>
+
+            <div class="section-title">Tonalité de communication <span class="required">*</span></div>
+            <div class="tone-grid">
+                <div class="option-card" onclick="selectOption(this, 'professionnel')">
+                    <div class="option-icon">👔</div>
+                    <div class="option-title">Professionnel</div>
+                    <div class="option-description">Formel et corporatif</div>
+                </div>
+
+                <div class="option-card" onclick="selectOption(this, 'amical')">
+                    <div class="option-icon">😊</div>
+                    <div class="option-title">Amical</div>
+                    <div class="option-description">Chaleureux</div>
+                </div>
+
+                <div class="option-card" onclick="selectOption(this, 'decontracte')">
+                    <div class="option-icon">👋</div>
+                    <div class="option-title">Décontracté</div>
+                    <div class="option-description">Informel</div>
+                </div>
+
+                <div class="option-card" onclick="selectOption(this, 'empathique')">
+                    <div class="option-icon">💙</div>
+                    <div class="option-title">Empathique</div>
+                    <div class="option-description">Bienveillant</div>
+                </div>
+
+                <div class="option-card" onclick="selectOption(this, 'direct')">
+                    <div class="option-icon">🎯</div>
+                    <div class="option-title">Direct</div>
+                    <div class="option-description">Efficace</div>
+                </div>
+
+                <div class="option-card" onclick="selectOption(this, 'enthousiaste')">
+                    <div class="option-icon">🌟</div>
+                    <div class="option-title">Enthousiaste</div>
+                    <div class="option-description">Dynamique</div>
+                </div>
+
+                <div class="option-card" onclick="selectOption(this, 'calme')">
+                    <div class="option-icon">🧘</div>
+                    <div class="option-title">Calme</div>
+                    <div class="option-description">Rassurant</div>
+                </div>
+
+                <div class="option-card" onclick="selectOption(this, 'pedagogue')">
+                    <div class="option-icon">🎓</div>
+                    <div class="option-title">Pédagogue</div>
+                    <div class="option-description">Détaillé</div>
+                </div>
+            </div>
+
+            <div class="section-title" style="margin-top: 40px;">FAQ - Questions fréquentes</div>
+            <button class="btn-add" onclick="toggleAddSection()">+ Ajouter question</button>
+
+            <div class="add-faq-section" id="addFaqSection">
+                <div class="form-group">
+                    <label class="form-label">Question <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="newQuestion" placeholder="Quels sont vos délais de livraison ?">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Réponse <span class="required">*</span></label>
+                    <textarea class="form-textarea" id="newAnswer" placeholder="Nos délais sont de 24-48h pour les grandes villes et 3-5 jours pour les autres villes."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Catégorie</label>
+                    <select class="form-select" id="newCategory">
+                        <option>Aucune catégorie</option>
+                        <option>Livraison</option>
+                        <option>Paiement</option>
+                        <option>Retours</option>
+                        <option>Produits</option>
+                    </select>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-save" onclick="saveFaq()">✓ Enregistrer</button>
+                    <button class="btn-cancel" onclick="toggleAddSection()">Annuler</button>
+                </div>
+            </div>
+
+            <div class="faq-list" id="faqList">
+                <div class="faq-item">
+                    <div class="faq-category">Livraison</div>
+                    <div class="faq-header">
+                        <div class="faq-question-display">Quels sont vos délais de livraison ?</div>
+                        <button class="btn-delete" onclick="deleteFaq(this)">🗑️ Supprimer</button>
+                    </div>
+                    <div class="faq-answer-display">Nos délais sont de 24-48h pour les grandes villes et 3-5 jours pour les autres villes.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Configuration (Notifications + Langues) -->
+        <div class="step-content" data-step="5">
+            <div class="content-header">
+                <h2 class="content-title">🔔 Configuration opérationnelle</h2>
+                <p class="content-subtitle">Configurez les notifications et les paramètres de fonctionnement</p>
+            </div>
+
+            <div class="section-title">Notifications</div>
+            
+            <div class="notification-card active">
+                <div class="notification-header">
+                    <div class="notification-title-wrapper">
+                        <div class="notification-icon">🎫</div>
+                        <div class="notification-title">Nouveau ticket créé</div>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleNotification(this)"></div>
+                </div>
+                <div class="notification-description">Alerte immédiate quand un ticket est créé</div>
+
+                <div class="channels-section">
+                    <div class="channel-tabs">
+                        <div class="channel-tab active" onclick="switchChannel(this, 'email1')">📧 Email</div>
+                        <div class="channel-tab" onclick="switchChannel(this, 'whatsapp1')">💬 WhatsApp</div>
+                        <div class="channel-tab" onclick="switchChannel(this, 'telegram1')">✈️ Telegram</div>
+                    </div>
+
+                    <div class="channel-content active" id="email1">
+                        <div class="form-group">
+                            <label class="form-label">Adresse email</label>
+                            <input type="email" class="form-input" placeholder="support@example.com" value="support@example.com">
+                        </div>
+                    </div>
+
+                    <div class="channel-content" id="whatsapp1">
+                        <div class="form-group">
+                            <label class="form-label">Numéro WhatsApp</label>
+                            <input type="tel" class="form-input" placeholder="+212 6 XX XX XX XX">
+                        </div>
+                    </div>
+
+                    <div class="channel-content" id="telegram1">
+                        <div class="form-group">
+                            <label class="form-label">Chat ID Telegram</label>
+                            <input type="text" class="form-input" placeholder="123456789">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification-card active">
+                <div class="notification-header">
+                    <div class="notification-title-wrapper">
+                        <div class="notification-icon">⏰</div>
+                        <div class="notification-title">Ticket en attente</div>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleNotification(this)"></div>
+                </div>
+                <div class="notification-description">Ticket sans réponse</div>
+
+                <div class="channels-section">
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label">Délai avant alerte</label>
+                        <select class="form-select">
+                            <option>30 minutes</option>
+                            <option>1 heure</option>
+                            <option>2 heures</option>
+                            <option>4 heures</option>
+                        </select>
+                    </div>
+
+                    <div class="channel-tabs">
+                        <div class="channel-tab active" onclick="switchChannel(this, 'email2')">📧 Email</div>
+                        <div class="channel-tab" onclick="switchChannel(this, 'whatsapp2')">💬 WhatsApp</div>
+                        <div class="channel-tab" onclick="switchChannel(this, 'telegram2')">✈️ Telegram</div>
+                    </div>
+
+                    <div class="channel-content active" id="email2">
+                        <div class="form-group">
+                            <label class="form-label">Adresse email</label>
+                            <input type="email" class="form-input" placeholder="support@example.com">
+                        </div>
+                    </div>
+
+                    <div class="channel-content" id="whatsapp2">
+                        <div class="form-group">
+                            <label class="form-label">Numéro WhatsApp</label>
+                            <input type="tel" class="form-input" placeholder="+212 6 XX XX XX XX">
+                        </div>
+                    </div>
+
+                    <div class="channel-content" id="telegram2">
+                        <div class="form-group">
+                            <label class="form-label">Chat ID Telegram</label>
+                            <input type="text" class="form-input" placeholder="123456789">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title" style="margin-top: 40px;">Langues supportées <span class="required">*</span></div>
+            <div class="languages-grid">
+                <div class="language-card selected" onclick="toggleLanguage(this)">🇫🇷 Français</div>
+                <div class="language-card" onclick="toggleLanguage(this)">🇬🇧 English</div>
+                <div class="language-card" onclick="toggleLanguage(this)">🇲🇦 العربية</div>
+                <div class="language-card" onclick="toggleLanguage(this)">🇪🇸 Español</div>
+                <div class="language-card" onclick="toggleLanguage(this)">🇩🇪 Deutsch</div>
+                <div class="language-card" onclick="toggleLanguage(this)">🇮🇹 Italiano</div>
+            </div>
+        </div>
+
+        <!-- Step 6: Intégrations -->
+        <div class="step-content" data-step="6">
+            <div class="content-header">
+                <h2 class="content-title">🔗 Sélectionnez vos intégrations</h2>
+                <p class="content-subtitle">Connectez les outils que votre agent utilisera</p>
+            </div>
+
+            <div class="section-title">📱 Canaux de communication</div>
+            <div class="objectives-container">
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">💬</div>
+                    <div class="objective-content">
+                        <div class="objective-title">WhatsApp Business</div>
+                        <div class="objective-description">Communiquez avec vos clients via WhatsApp</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">📘</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Facebook Messenger</div>
+                        <div class="objective-description">Intégrez votre page Facebook</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">✈️</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Telegram</div>
+                        <div class="objective-description">Connectez votre bot Telegram</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">🎫 Systèmes de ticketing</div>
+            <div class="objectives-container">
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">📋</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Freshdesk <span style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: 2px 8px; border-radius: 8px; font-size: 10px; margin-left: 8px;">Populaire</span></div>
+                        <div class="objective-description">Synchronisez vos tickets Freshdesk</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">📊</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Zendesk</div>
+                        <div class="objective-description">Intégrez Zendesk Support</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">🔵</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Jira Service Management</div>
+                        <div class="objective-description">Gérez les tickets techniques avec Jira</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">🛒 E-commerce & CRM</div>
+            <div class="objectives-container">
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">🛍️</div>
+                    <div class="objective-content">
+                        <div class="objective-title">Shopify <span style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: 2px 8px; border-radius: 8px; font-size: 10px; margin-left: 8px;">Populaire</span></div>
+                        <div class="objective-description">Accès aux commandes et produits</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">🛒</div>
+                    <div class="objective-content">
+                        <div class="objective-title">WooCommerce</div>
+                        <div class="objective-description">Synchronisez votre boutique WordPress</div>
+                    </div>
+                </div>
+
+                <div class="objective-item" onclick="toggleObjective(this)">
+                    <div class="objective-checkbox"></div>
+                    <div class="objective-icon">🎯</div>
+                    <div class="objective-content">
+                        <div class="objective-title">HubSpot CRM</div>
+                        <div class="objective-description">Accès à vos contacts et deals</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 7: Configuration des intégrations -->
+        <div class="step-content" data-step="7">
+            <div class="content-header">
+                <h2 class="content-title">🔧 Configuration des intégrations</h2>
+                <p class="content-subtitle">Configurez les intégrations que vous avez sélectionnées</p>
+            </div>
+
+            <div class="info-box">
+                <div class="info-icon">ℹ️</div>
+                <div class="info-text">Vous pourrez configurer vos intégrations après la création de l'agent. Pour l'instant, nous allons simplement finaliser la configuration de base.</div>
+            </div>
+
+            <div class="faq-item" style="text-align: center; padding: 48px;">
+                <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
+                <h3 style="font-size: 24px; margin-bottom: 12px;">Félicitations !</h3>
+                <p style="color: var(--text-secondary); font-size: 16px; line-height: 1.6;">
+                    Votre agent est prêt à être créé. Cliquez sur "Créer l'agent" pour finaliser la configuration.
+                    <br><br>
+                    Vous pourrez ensuite configurer les intégrations et personnaliser davantage votre agent depuis le tableau de bord.
+                </p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="wizard-actions">
+            <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()" disabled>
+                ← Précédent
+            </button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+                Suivant →
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 7;
+
+        function updateProgress() {
+            // Update progress bar
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Update step circles
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                const stepNum = index + 1;
+                step.classList.remove('active', 'completed');
+                
+                if (stepNum < currentStep) {
+                    step.classList.add('completed');
+                } else if (stepNum === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+
+            // Update content
+            document.querySelectorAll('.step-content').forEach((content, index) => {
+                content.classList.remove('active');
+                if (index + 1 === currentStep) {
+                    content.classList.add('active');
+                }
+            });
+
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentStep === 1;
+            
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentStep === totalSteps) {
+                nextBtn.textContent = '🎉 Créer l\'agent';
+                nextBtn.onclick = finishWizard;
+            } else {
+                nextBtn.innerHTML = 'Suivant →';
+                nextBtn.onclick = nextStep;
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateProgress();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateProgress();
+            }
+        }
+
+        function goToStep(step) {
+            if (step >= 1 && step <= totalSteps) {
+                currentStep = step;
+                updateProgress();
+            }
+        }
+
+        function finishWizard() {
+            alert('🎉 Félicitations ! Votre agent a été créé avec succès !\n\nVous allez être redirigé vers le tableau de bord.');
+            // Redirect to dashboard or show success message
+        }
+
+        // Selection functions
+        function selectOption(element, value) {
+            const siblings = element.parentElement.querySelectorAll('.option-card');
+            siblings.forEach(sibling => sibling.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function toggleObjective(element) {
+            element.classList.toggle('selected');
+        }
+
+        function toggleLanguage(element) {
+            element.classList.toggle('selected');
+        }
+
+        // FAQ functions
+        function toggleAddSection() {
+            const section = document.getElementById('addFaqSection');
+            section.classList.toggle('active');
+            
+            if (!section.classList.contains('active')) {
+                document.getElementById('newQuestion').value = '';
+                document.getElementById('newAnswer').value = '';
+                document.getElementById('newCategory').selectedIndex = 0;
+            }
+        }
+
+        function saveFaq() {
+            const question = document.getElementById('newQuestion').value.trim();
+            const answer = document.getElementById('newAnswer').value.trim();
+            const category = document.getElementById('newCategory').value;
+
+            if (!question || !answer) {
+                alert('Veuillez remplir la question et la réponse');
+                return;
+            }
+
+            const faqList = document.getElementById('faqList');
+            const faqItem = document.createElement('div');
+            faqItem.className = 'faq-item';
+            
+            let categoryHtml = '';
+            if (category && category !== 'Aucune catégorie') {
+                categoryHtml = `<div class="faq-category">${category}</div>`;
+            }
+
+            faqItem.innerHTML = `
+                ${categoryHtml}
+                <div class="faq-header">
+                    <div class="faq-question-display">${question}</div>
+                    <button class="btn-delete" onclick="deleteFaq(this)">🗑️ Supprimer</button>
+                </div>
+                <div class="faq-answer-display">${answer}</div>
+            `;
+
+            faqList.appendChild(faqItem);
+            toggleAddSection();
+        }
+
+        function deleteFaq(button) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette question ?')) {
+                button.closest('.faq-item').remove();
+            }
+        }
+
+        // Notification functions
+        function toggleNotification(toggle) {
+            toggle.classList.toggle('active');
+            toggle.closest('.notification-card').classList.toggle('active');
+        }
+
+        function switchChannel(tab, channelId) {
+            const card = tab.closest('.notification-card');
+            
+            card.querySelectorAll('.channel-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            card.querySelectorAll('.channel-content').forEach(c => c.classList.remove('active'));
+            card.querySelector(`#${channelId}`).classList.add('active');
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 4/8 - Fonctionnalités souhaitées</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #c026d3;
+            --primary-light: #e879f9;
+            --primary-dark: #a21caf;
+            --secondary-color: #7c3aed;
+            --bg-primary: #1a0b2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: #3d2761;
+            --bg-input: #2a1a4a;
+            --text-primary: #ffffff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #9333ea;
+            --border-color: #6d28d9;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .wizard-container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 48px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .wizard-header {
+            margin-bottom: 24px;
+        }
+
+        .wizard-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wizard-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.15), rgba(124, 58, 237, 0.15));
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-icon {
+            font-size: 24px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .features-container {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+        }
+
+        .feature-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-item:hover {
+            background: rgba(192, 38, 211, 0.1);
+        }
+
+        .feature-item.selected {
+            background: rgba(192, 38, 211, 0.2);
+            border: 2px solid var(--primary-color);
+        }
+
+        .feature-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-item.selected .feature-checkbox {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .feature-item.selected .feature-checkbox::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .feature-content {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 12px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1 class="wizard-title">⚙️ Étape 3/8 - Sélectionnez les fonctionnalités souhaitées</h1>
+            <p class="wizard-subtitle">Choisissez les capacités que votre agent doit avoir</p>
+        </div>
+
+        <div class="info-box">
+            <div class="info-icon">💡</div>
+            <div class="info-text">Plus vous activez de fonctionnalités, plus votre agent sera puissant et polyvalent</div>
+        </div>
+
+        <div class="features-container">
+            <div class="feature-item selected" onclick="toggleFeature(this)">
+                <div class="feature-checkbox"></div>
+                <div class="feature-icon">📋</div>
+                <div class="feature-content">
+                    <div class="feature-title">Collecte d'informations Client</div>
+                    <div class="feature-description">Recueillir et mettre à jour les coordonnées et préférences clients</div>
+                </div>
+            </div>
+
+            <div class="feature-item selected" onclick="toggleFeature(this)">
+                <div class="feature-checkbox"></div>
+                <div class="feature-icon">🙋</div>
+                <div class="feature-content">
+                    <div class="feature-title">Escalade vers Agent Humain</div>
+                    <div class="feature-description">Transfert intelligent vers un support humain si nécessaire</div>
+                </div>
+            </div>
+
+            <div class="feature-item selected" onclick="toggleFeature(this)">
+                <div class="feature-checkbox"></div>
+                <div class="feature-icon">🎫</div>
+                <div class="feature-content">
+                    <div class="feature-title">Gestion des Tickets</div>
+                    <div class="feature-description">Créer et suivre automatiquement les tickets pour demandes complexes</div>
+                </div>
+            </div>
+
+            <div class="feature-item" onclick="toggleFeature(this)">
+                <div class="feature-checkbox"></div>
+                <div class="feature-icon">🔀</div>
+                <div class="feature-content">
+                    <div class="feature-title">Routage Intelligent</div>
+                    <div class="feature-description">Identifier l'intention et transférer vers le bon sous-agent</div>
+                </div>
+            </div>
+
+            <div class="feature-item" onclick="toggleFeature(this)">
+                <div class="feature-checkbox"></div>
+                <div class="feature-icon">💡</div>
+                <div class="feature-content">
+                    <div class="feature-title">Recommandations de Produits</div>
+                    <div class="feature-description">Suggérer des produits pertinents basés sur le contexte</div>
+                </div>
+            </div>
+
+            <div class="feature-item" onclick="toggleFeature(this)">
+                <div class="feature-checkbox"></div>
+                <div class="feature-icon">📅</div>
+                <div class="feature-content">
+                    <div class="feature-title">Prise de Rendez-vous</div>
+                    <div class="feature-description">Réserver, modifier et annuler des rendez-vous automatiquement</div>
+                </div>
+            </div>
+
+            <div class="feature-item" onclick="toggleFeature(this)">
+                <div class="feature-checkbox"></div>
+                <div class="feature-icon">📦</div>
+                <div class="feature-content">
+                    <div class="feature-title">Suivi de Commandes</div>
+                    <div class="feature-description">Fournir le statut et les détails de livraison en temps réel</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-actions">
+            <button class="btn btn-secondary">← Précédent</button>
+            <button class="btn btn-primary">Suivant →</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleFeature(element) {
+            element.classList.toggle('selected');
+        }
+    </script>
+</body>
+</html>

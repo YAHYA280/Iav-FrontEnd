@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 6/9 - FAQ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #c026d3;
+            --primary-light: #e879f9;
+            --primary-dark: #a21caf;
+            --secondary-color: #7c3aed;
+            --bg-primary: #1a0b2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: #3d2761;
+            --bg-input: #2a1a4a;
+            --text-primary: #ffffff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #9333ea;
+            --border-color: #6d28d9;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .wizard-container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 48px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .wizard-header {
+            margin-bottom: 32px;
+        }
+
+        .wizard-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wizard-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .faq-list {
+            margin-bottom: 32px;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .faq-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .faq-question-display {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            padding-right: 16px;
+        }
+
+        .faq-answer-display {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .faq-category {
+            display: inline-block;
+            background: rgba(192, 38, 211, 0.2);
+            color: var(--primary-light);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(192, 38, 211, 0.2);
+        }
+
+        .add-faq-section {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .add-faq-section.active {
+            display: block;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            background: #059669;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--primary-light);
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 12px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1 class="wizard-title">❓ FAQ</h1>
+            <p class="wizard-subtitle">Configurez les questions fréquentes</p>
+        </div>
+
+        <button class="btn-add" onclick="toggleAddSection()">+ Ajouter question</button>
+
+        <!-- Section d'ajout de FAQ -->
+        <div class="add-faq-section" id="addFaqSection">
+            <div class="form-group">
+                <label class="form-label">Question *</label>
+                <input type="text" class="form-input" id="newQuestion" placeholder="Quels sont vos délais de livraison ?">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Réponse *</label>
+                <textarea class="form-textarea" id="newAnswer" placeholder="Nos délais sont de 24-48h pour les grandes villes et 3-5 jours pour les autres villes."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Catégorie</label>
+                <select class="form-select" id="newCategory">
+                    <option>Aucune catégorie</option>
+                    <option>Livraison</option>
+                    <option>Paiement</option>
+                    <option>Retours</option>
+                    <option>Produits</option>
+                </select>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-save" onclick="saveFaq()">✓ Enregistrer</button>
+                <button class="btn-cancel" onclick="toggleAddSection()">Annuler</button>
+            </div>
+        </div>
+
+        <!-- Liste des FAQs -->
+        <div class="faq-list" id="faqList">
+            <div class="faq-item">
+                <div class="faq-category">Livraison</div>
+                <div class="faq-header">
+                    <div class="faq-question-display">Quels sont vos délais de livraison ?</div>
+                    <button class="btn-delete" onclick="deleteFaq(this)">🗑️ Supprimer</button>
+                </div>
+                <div class="faq-answer-display">Nos délais sont de 24-48h pour les grandes villes et 3-5 jours pour les autres villes.</div>
+            </div>
+        </div>
+
+        <div class="wizard-actions">
+            <button class="btn btn-secondary">← Précédent</button>
+            <button class="btn btn-primary">Suivant →</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleAddSection() {
+            const section = document.getElementById('addFaqSection');
+            section.classList.toggle('active');
+            
+            if (!section.classList.contains('active')) {
+                // Reset form
+                document.getElementById('newQuestion').value = '';
+                document.getElementById('newAnswer').value = '';
+                document.getElementById('newCategory').selectedIndex = 0;
+            }
+        }
+
+        function saveFaq() {
+            const question = document.getElementById('newQuestion').value.trim();
+            const answer = document.getElementById('newAnswer').value.trim();
+            const category = document.getElementById('newCategory').value;
+
+            if (!question || !answer) {
+                alert('Veuillez remplir la question et la réponse');
+                return;
+            }
+
+            const faqList = document.getElementById('faqList');
+            const faqItem = document.createElement('div');
+            faqItem.className = 'faq-item';
+            
+            let categoryHtml = '';
+            if (category && category !== 'Aucune catégorie') {
+                categoryHtml = `<div class="faq-category">${category}</div>`;
+            }
+
+            faqItem.innerHTML = `
+                ${categoryHtml}
+                <div class="faq-header">
+                    <div class="faq-question-display">${question}</div>
+                    <button class="btn-delete" onclick="deleteFaq(this)">🗑️ Supprimer</button>
+                </div>
+                <div class="faq-answer-display">${answer}</div>
+            `;
+
+            faqList.appendChild(faqItem);
+            toggleAddSection();
+        }
+
+        function deleteFaq(button) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette question ?')) {
+                button.closest('.faq-item').remove();
+            }
+        }
+    </script>
+</body>
+</html>

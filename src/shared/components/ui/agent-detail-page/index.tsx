@@ -21,6 +21,7 @@ interface AgentDetailPageProps {
   description: string;
   features: Feature[];
   onBack: () => void;
+  onTryFree?: () => void;
 }
 
 export const AgentDetailPage: React.FC<AgentDetailPageProps> = ({
@@ -31,6 +32,7 @@ export const AgentDetailPage: React.FC<AgentDetailPageProps> = ({
   description,
   features,
   onBack,
+  onTryFree,
 }) => {
   const [expandedFeature, setExpandedFeature] = useState<string | null>(null);
   const pageRef = useRef<HTMLDivElement>(null);
@@ -114,8 +116,11 @@ export const AgentDetailPage: React.FC<AgentDetailPageProps> = ({
   };
 
   const handleTryFree = () => {
-    console.log('Try free clicked for agent:', agentId);
-    // TODO: Implement try free functionality
+    if (onTryFree) {
+      onTryFree();
+    } else {
+      console.log('Try free clicked for agent:', agentId);
+    }
   };
 
   const handleBookDemo = () => {

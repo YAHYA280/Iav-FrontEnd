@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 7/9 - Notifications</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #c026d3;
+            --primary-light: #e879f9;
+            --primary-dark: #a21caf;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --bg-primary: #1a0b2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: #3d2761;
+            --bg-input: #2a1a4a;
+            --text-primary: #ffffff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #9333ea;
+            --border-color: #6d28d9;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .wizard-container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 48px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .wizard-header {
+            margin-bottom: 32px;
+        }
+
+        .wizard-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wizard-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .notification-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .notification-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-icon {
+            font-size: 28px;
+        }
+
+        .notification-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .notification-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 56px;
+            height: 28px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 28px;
+        }
+
+        .channels-section {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .notification-card.active .channels-section {
+            display: block;
+        }
+
+        .channel-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .channel-tab {
+            padding: 10px 20px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .channel-tab:hover {
+            border-color: var(--primary-light);
+        }
+
+        .channel-tab.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-color: var(--primary-color);
+        }
+
+        .channel-content {
+            display: none;
+        }
+
+        .channel-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(192, 38, 211, 0.2);
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 12px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1 class="wizard-title">🔔 Notifications</h1>
+            <p class="wizard-subtitle">Configurez les alertes</p>
+        </div>
+
+        <!-- Notification 1: Nouveau ticket créé -->
+        <div class="notification-card">
+            <div class="notification-header">
+                <div class="notification-title-wrapper">
+                    <div class="notification-icon">🎫</div>
+                    <div class="notification-title">Nouveau ticket créé</div>
+                </div>
+                <div class="toggle-switch active" onclick="toggleNotification(this)"></div>
+            </div>
+            <div class="notification-description">Alerte immédiate quand un ticket est créé</div>
+
+            <div class="channels-section">
+                <div class="channel-tabs">
+                    <div class="channel-tab active" onclick="switchChannel(this, 'email1')">
+                        📧 Email
+                    </div>
+                    <div class="channel-tab" onclick="switchChannel(this, 'whatsapp1')">
+                        💬 WhatsApp
+                    </div>
+                    <div class="channel-tab" onclick="switchChannel(this, 'telegram1')">
+                        ✈️ Telegram
+                    </div>
+                </div>
+
+                <div class="channel-content active" id="email1">
+                    <div class="form-group">
+                        <label class="form-label">Adresse email</label>
+                        <input type="email" class="form-input" placeholder="support@example.com" value="support@example.com">
+                    </div>
+                </div>
+
+                <div class="channel-content" id="whatsapp1">
+                    <div class="form-group">
+                        <label class="form-label">Numéro WhatsApp</label>
+                        <input type="tel" class="form-input" placeholder="+212 6 XX XX XX XX">
+                    </div>
+                </div>
+
+                <div class="channel-content" id="telegram1">
+                    <div class="form-group">
+                        <label class="form-label">Chat ID Telegram</label>
+                        <input type="text" class="form-input" placeholder="123456789">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification 2: Ticket en attente -->
+        <div class="notification-card active">
+            <div class="notification-header">
+                <div class="notification-title-wrapper">
+                    <div class="notification-icon">⏰</div>
+                    <div class="notification-title">Ticket en attente</div>
+                </div>
+                <div class="toggle-switch active" onclick="toggleNotification(this)"></div>
+            </div>
+            <div class="notification-description">Ticket sans réponse</div>
+
+            <div class="channels-section">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="form-label">Délai avant alerte</label>
+                    <select class="form-select">
+                        <option>30 minutes</option>
+                        <option>1 heure</option>
+                        <option>2 heures</option>
+                        <option>4 heures</option>
+                    </select>
+                </div>
+
+                <div class="channel-tabs">
+                    <div class="channel-tab active" onclick="switchChannel(this, 'email2')">
+                        📧 Email
+                    </div>
+                    <div class="channel-tab" onclick="switchChannel(this, 'whatsapp2')">
+                        💬 WhatsApp
+                    </div>
+                    <div class="channel-tab" onclick="switchChannel(this, 'telegram2')">
+                        ✈️ Telegram
+                    </div>
+                </div>
+
+                <div class="channel-content active" id="email2">
+                    <div class="form-group">
+                        <label class="form-label">Adresse email</label>
+                        <input type="email" class="form-input" placeholder="support@example.com" value="support@example.com">
+                    </div>
+                </div>
+
+                <div class="channel-content" id="whatsapp2">
+                    <div class="form-group">
+                        <label class="form-label">Numéro WhatsApp</label>
+                        <input type="tel" class="form-input" placeholder="+212 6 XX XX XX XX">
+                    </div>
+                </div>
+
+                <div class="channel-content" id="telegram2">
+                    <div class="form-group">
+                        <label class="form-label">Chat ID Telegram</label>
+                        <input type="text" class="form-input" placeholder="123456789">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification 3: Ticket réouvert -->
+        <div class="notification-card active">
+            <div class="notification-header">
+                <div class="notification-title-wrapper">
+                    <div class="notification-icon">🔄</div>
+                    <div class="notification-title">Ticket réouvert</div>
+                </div>
+                <div class="toggle-switch active" onclick="toggleNotification(this)"></div>
+            </div>
+            <div class="notification-description">Client répond après fermeture</div>
+
+            <div class="channels-section">
+                <div class="channel-tabs">
+                    <div class="channel-tab active" onclick="switchChannel(this, 'email3')">
+                        📧 Email
+                    </div>
+                    <div class="channel-tab" onclick="switchChannel(this, 'whatsapp3')">
+                        💬 WhatsApp
+                    </div>
+                    <div class="channel-tab" onclick="switchChannel(this, 'telegram3')">
+                        ✈️ Telegram
+                    </div>
+                </div>
+
+                <div class="channel-content active" id="email3">
+                    <div class="form-group">
+                        <label class="form-label">Adresse email</label>
+                        <input type="email" class="form-input" placeholder="support@example.com" value="support@example.com">
+                    </div>
+                </div>
+
+                <div class="channel-content" id="whatsapp3">
+                    <div class="form-group">
+                        <label class="form-label">Numéro WhatsApp</label>
+                        <input type="tel" class="form-input" placeholder="+212 6 XX XX XX XX">
+                    </div>
+                </div>
+
+                <div class="channel-content" id="telegram3">
+                    <div class="form-group">
+                        <label class="form-label">Chat ID Telegram</label>
+                        <input type="text" class="form-input" placeholder="123456789">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification 4: Intégration déconnectée -->
+        <div class="notification-card active">
+            <div class="notification-header">
+                <div class="notification-title-wrapper">
+                    <div class="notification-icon">⚠️</div>
+                    <div class="notification-title">Intégration déconnectée</div>
+                </div>
+                <div class="toggle-switch active" onclick="toggleNotification(this)"></div>
+            </div>
+            <div class="notification-description">Alerte problème intégration</div>
+
+            <div class="channels-section">
+                <div class="channel-tabs">
+                    <div class="channel-tab active" onclick="switchChannel(this, 'email4')">
+                        📧 Email
+                    </div>
+                    <div class="channel-tab" onclick="switchChannel(this, 'whatsapp4')">
+                        💬 WhatsApp
+                    </div>
+                    <div class="channel-tab" onclick="switchChannel(this, 'telegram4')">
+                        ✈️ Telegram
+                    </div>
+                </div>
+
+                <div class="channel-content active" id="email4">
+                    <div class="form-group">
+                        <label class="form-label">Adresse email</label>
+                        <input type="email" class="form-input" placeholder="admin@example.com" value="admin@example.com">
+                    </div>
+                </div>
+
+                <div class="channel-content" id="whatsapp4">
+                    <div class="form-group">
+                        <label class="form-label">Numéro WhatsApp</label>
+                        <input type="tel" class="form-input" placeholder="+212 6 XX XX XX XX">
+                    </div>
+                </div>
+
+                <div class="channel-content" id="telegram4">
+                    <div class="form-group">
+                        <label class="form-label">Chat ID Telegram</label>
+                        <input type="text" class="form-input" placeholder="123456789">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-actions">
+            <button class="btn btn-secondary">← Précédent</button>
+            <button class="btn btn-primary">Suivant →</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleNotification(toggle) {
+            toggle.classList.toggle('active');
+            toggle.closest('.notification-card').classList.toggle('active');
+        }
+
+        function switchChannel(tab, channelId) {
+            // Get parent notification card
+            const card = tab.closest('.notification-card');
+            
+            // Remove active class from all tabs in this card
+            card.querySelectorAll('.channel-tab').forEach(t => t.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            
+            // Hide all channel contents in this card
+            card.querySelectorAll('.channel-content').forEach(c => c.classList.remove('active'));
+            
+            // Show selected channel content
+            card.querySelector(`#${channelId}`).classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 5/9 - Tonalité de communication</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #c026d3;
+            --primary-light: #e879f9;
+            --primary-dark: #a21caf;
+            --secondary-color: #7c3aed;
+            --bg-primary: #1a0b2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: #3d2761;
+            --bg-input: #2a1a4a;
+            --text-primary: #ffffff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #9333ea;
+            --border-color: #6d28d9;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .wizard-container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 48px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .wizard-header {
+            margin-bottom: 32px;
+        }
+
+        .wizard-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wizard-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .section-label {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .tone-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .tone-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(192, 38, 211, 0.3);
+        }
+
+        .tone-card.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.2), rgba(124, 58, 237, 0.2));
+            box-shadow: 0 0 0 4px rgba(192, 38, 211, 0.2);
+        }
+
+        .tone-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .tone-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .tone-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 12px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1 class="wizard-title">💬 Étape 4/9 - Tonalité de communication</h1>
+            <p class="wizard-subtitle">Choisissez le style de communication de votre agent</p>
+        </div>
+
+        <div class="section-label">Tonalité de communication <span class="required">*</span></div>
+
+        <div class="option-grid">
+            <div class="tone-card" onclick="selectTone(this)">
+                <div class="tone-icon">👔</div>
+                <div class="tone-title">Professionnel</div>
+                <div class="tone-description">Formel et corporatif</div>
+            </div>
+
+            <div class="tone-card" onclick="selectTone(this)">
+                <div class="tone-icon">😊</div>
+                <div class="tone-title">Amical</div>
+                <div class="tone-description">Chaleureux et accessible</div>
+            </div>
+
+            <div class="tone-card" onclick="selectTone(this)">
+                <div class="tone-icon">👋</div>
+                <div class="tone-title">Décontracté</div>
+                <div class="tone-description">Informel et convivial</div>
+            </div>
+
+            <div class="tone-card" onclick="selectTone(this)">
+                <div class="tone-icon">💙</div>
+                <div class="tone-title">Empathique</div>
+                <div class="tone-description">Compréhensif et bienveillant</div>
+            </div>
+
+            <div class="tone-card" onclick="selectTone(this)">
+                <div class="tone-icon">🎯</div>
+                <div class="tone-title">Direct</div>
+                <div class="tone-description">Concis et efficace</div>
+            </div>
+
+            <div class="tone-card" onclick="selectTone(this)">
+                <div class="tone-icon">🌟</div>
+                <div class="tone-title">Enthousiaste</div>
+                <div class="tone-description">Dynamique et motivant</div>
+            </div>
+
+            <div class="tone-card" onclick="selectTone(this)">
+                <div class="tone-icon">🧘</div>
+                <div class="tone-title">Calme</div>
+                <div class="tone-description">Posé et rassurant</div>
+            </div>
+
+            <div class="tone-card" onclick="selectTone(this)">
+                <div class="tone-icon">🎓</div>
+                <div class="tone-title">Pédagogue</div>
+                <div class="tone-description">Explicatif et détaillé</div>
+            </div>
+        </div>
+
+        <div class="wizard-actions">
+            <button class="btn btn-secondary">← Précédent</button>
+            <button class="btn btn-primary">Suivant →</button>
+        </div>
+    </div>
+
+    <script>
+        function selectTone(element) {
+            const allCards = document.querySelectorAll('.tone-card');
+            allCards.forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+    </script>
+</body>
+</html>
