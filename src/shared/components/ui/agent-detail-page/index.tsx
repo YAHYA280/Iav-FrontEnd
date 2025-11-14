@@ -328,6 +328,7 @@ export const AgentDetailPage: React.FC<AgentDetailPageProps> = ({
             <Box
               component="button"
               onClick={handleTryFree}
+              className="group"
               sx={{
                 flex: { xs: '1 1 100%', sm: '0 1 auto' },
                 padding: '18px 36px',
@@ -342,42 +343,44 @@ export const AgentDetailPage: React.FC<AgentDetailPageProps> = ({
                 borderRadius: '16px',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                boxShadow: `0 8px 24px ${agentColor.glow}`,
+                boxShadow: `0 4px 12px ${agentColor.glow}`,
                 position: 'relative',
                 overflow: 'hidden',
-                '&:before': {
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  background: `linear-gradient(135deg, ${agentColor.primary}44 0%, ${agentColor.primary}22 100%)`,
-                  opacity: 0,
-                  transition: 'opacity 0.3s ease',
-                },
                 '&:hover': {
-                  transform: 'translateY(-2px)',
+                  transform: 'scale(1.05)',
                   borderColor: agentColor.primary,
-                  boxShadow: `0 12px 36px ${agentColor.glow}`,
-                  '&:before': {
-                    opacity: 1,
+                  boxShadow: `0 6px 16px ${agentColor.glow}`,
+                  '& .shine-effect': {
+                    transform: 'translateX(100%)',
                   },
                 },
                 '&:active': {
-                  transform: 'translateY(0)',
+                  transform: 'scale(0.95)',
                 },
               }}
             >
-              <span style={{ position: 'relative', zIndex: 1 }}>
+              <span style={{ position: 'relative', zIndex: 10 }}>
                 Essayer gratuitement
               </span>
+
+              {/* Shine animation effect */}
+              <Box
+                className="shine-effect"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.7s ease-out',
+                }}
+              />
             </Box>
 
             {/* Book Demo Button (Dark glassmorphic) */}
             <Box
               component="button"
               onClick={handleBookDemo}
+              className="group"
               sx={{
                 flex: { xs: '1 1 100%', sm: '0 1 auto' },
                 padding: '18px 36px',
@@ -392,36 +395,38 @@ export const AgentDetailPage: React.FC<AgentDetailPageProps> = ({
                 borderRadius: '16px',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
                 position: 'relative',
                 overflow: 'hidden',
-                '&:before': {
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  opacity: 0,
-                  transition: 'opacity 0.3s ease',
-                },
                 '&:hover': {
                   background: 'rgba(255, 255, 255, 0.06)',
                   borderColor: 'rgba(255, 255, 255, 0.25)',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
-                  '&:before': {
-                    opacity: 1,
+                  transform: 'scale(1.05)',
+                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)',
+                  '& .shine-effect': {
+                    transform: 'translateX(100%)',
                   },
                 },
                 '&:active': {
-                  transform: 'translateY(0)',
+                  transform: 'scale(0.95)',
                 },
               }}
             >
-              <span style={{ position: 'relative', zIndex: 1 }}>
+              <span style={{ position: 'relative', zIndex: 10 }}>
                 Réserver une démo
               </span>
+
+              {/* Shine animation effect */}
+              <Box
+                className="shine-effect"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.7s ease-out',
+                }}
+              />
             </Box>
           </Box>
         </Box>
@@ -435,7 +440,7 @@ export const AgentDetailPage: React.FC<AgentDetailPageProps> = ({
             alignItems: 'start',
             position: { xs: 'relative', md: 'fixed' },
             right: { md: '5%' },
-            top: { md: '120px' },
+            top: { md: '130px' },
             width: { md: 'calc(50% - 80px)' },
             maxWidth: { md: '530px' },
           }}
@@ -444,7 +449,7 @@ export const AgentDetailPage: React.FC<AgentDetailPageProps> = ({
             sx={{
               width: '100%',
               maxWidth: '530px',
-              height: { xs: 'auto', md: '530px' },
+              height: '670px',
               borderRadius: '40px',
               background: agentColor.primary,
               position: 'relative',

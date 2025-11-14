@@ -147,7 +147,7 @@ export const AgentProfileCard: React.FC<AgentProfileCardProps> = ({
           left: '50%',
           transform: 'translateX(-50%)',
           width: '195px',
-          height: '295px',
+          height: '670px',
           zIndex: 10,
           filter: 'drop-shadow(0 5px 20px rgba(0, 0, 0, 0.3))',
         }}
@@ -181,7 +181,7 @@ export const AgentProfileCard: React.FC<AgentProfileCardProps> = ({
           left: '50%',
           transform: 'translateX(-50%)',
           width: '195px',
-          height: '295px',
+          height: '670px',
           borderRadius: '17.469px',
           background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.00) 40%, rgba(0, 0, 0, 0.3) 60%, rgba(26, 29, 37, 0.8) 80%, #1A1D25 100%)',
           pointerEvents: 'none',
@@ -194,7 +194,7 @@ export const AgentProfileCard: React.FC<AgentProfileCardProps> = ({
         sx={{
           position: 'relative',
           width: '199.747px',
-          height: '259.875px',
+          height: '690px',
           mt: '-5px',
           display: 'flex',
           alignItems: 'center',
@@ -228,7 +228,7 @@ export const AgentProfileCard: React.FC<AgentProfileCardProps> = ({
         <Box
           sx={{
             width: '169.413px',
-            height: '239.54px',
+            height: '670px',
             position: 'relative',
             borderRadius: '17.469px',
             background: getBackgroundColor(),

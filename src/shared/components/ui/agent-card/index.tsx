@@ -167,7 +167,7 @@ export const AgentCard: React.FC<AgentProfileCardProps> = ({
               left: '50%',
               transform: 'translateX(-50%)',
               width: '145px',
-              height: '235px',
+              height: '670px',
               zIndex: 10,
               filter: 'drop-shadow(0 5px 20px rgba(0, 0, 0, 0.3))',
               borderRadius: '10px',
@@ -190,7 +190,7 @@ export const AgentCard: React.FC<AgentProfileCardProps> = ({
         <Box
           sx={{
             width: '169.413px',
-            height: '239.54px',
+            height: '670px',
             position: 'relative',
             borderRadius: '17.469px',
             background: getBackgroundColor(),
