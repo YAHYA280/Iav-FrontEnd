@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@/shared/components/fontawesome';
 import { agentColors } from '@/contexts/theme/agent-theme-context';
 import { GalaxyBackground } from '@/shared/components/backgrounds/galaxy-background';
 import DarkVeil from '@/shared/components/backgrounds/DarkVeil';
+import { CustomSelect } from '@/shared/components/ui/custom-select';
 import type { WizardData, FAQ } from '@/shared/types/wizard';
 import {
   wizardSteps,
@@ -276,17 +277,18 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
       <Box
         sx={{
           textAlign: 'center',
-          maxWidth: '800px',
+          maxWidth: '900px',
           margin: '0 auto',
-          py: 4,
+          pt: { xs: 2, md: 4 },
+          pb: 4,
         }}
       >
-      
+       
 
         {/* Welcome Title */}
         <Typography
           sx={{
-            fontSize: { xs: '32px', md: '42px' },
+            fontSize: { xs: '36px', md: '48px' },
             fontWeight: 700,
             mb: 3,
             color: '#FFF',
@@ -296,6 +298,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
+            letterSpacing: '-1px',
           }}
         >
           Configurez votre agent ITRI
@@ -304,10 +307,12 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
         {/* Description */}
         <Typography
           sx={{
-            fontSize: { xs: '16px', md: '18px' },
+            fontSize: { xs: '17px', md: '19px' },
             color: 'rgba(255, 255, 255, 0.8)',
             lineHeight: 1.8,
-            mb: 5,
+            mb: { xs: 5, md: 6 },
+            maxWidth: '700px',
+            margin: '0 auto',
             fontFamily: 'var(--font-primary)',
           }}
         >
@@ -316,13 +321,70 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
           selon vos besoins spécifiques.
         </Typography>
 
+        {/* Steps Preview - Horizontal Flow */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: 2,
+            mb: { xs: 6, md: 8 },
+            maxWidth: '900px',
+            margin: '0 auto',
+          }}
+        >
+          {[
+            { icon: '👥', text: 'Contexte' },
+            { icon: '🎯', text: 'Objectifs' },
+            { icon: '⚙️', text: 'Fonctionnalités' },
+            { icon: '💬', text: 'Identité' },
+            { icon: '📚', text: 'Base FAQ' },
+            { icon: '🌐', text: 'Langues' },
+            { icon: '🔗', text: 'Intégrations' },
+            { icon: '✨', text: 'Finalisation' },
+          ].map((step, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                background: 'rgba(255, 255, 255, 0.03)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: `1px solid ${agentColor.primary}22`,
+                borderRadius: '12px',
+                padding: '10px 18px',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  background: `${agentColor.primary}15`,
+                  borderColor: `${agentColor.primary}66`,
+                  transform: 'translateY(-2px)',
+                  boxShadow: `0 4px 16px ${agentColor.glow}`,
+                },
+              }}
+            >
+              <Box sx={{ fontSize: '20px' }}>{step.icon}</Box>
+              <Typography
+                sx={{
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  fontFamily: 'var(--font-primary)',
+                }}
+              >
+                {step.text}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+
         {/* Features Preview Cards */}
         <Box
           sx={{
             display: 'grid',
             gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
             gap: 3,
-            mt: 6,
           }}
         >
           <Box
@@ -332,7 +394,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
               WebkitBackdropFilter: 'blur(20px)',
               border: '2px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '20px',
-              padding: 3,
+              padding: '20px 24px',
               textAlign: 'center',
               transition: 'all 0.3s ease',
               '&:hover': {
@@ -348,7 +410,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 fontSize: '16px',
                 fontWeight: 600,
                 color: '#FFF',
-                mb: 1,
+                mb: 0.5,
                 fontFamily: 'var(--font-primary)',
               }}
             >
@@ -372,7 +434,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
               WebkitBackdropFilter: 'blur(20px)',
               border: '2px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '20px',
-              padding: 3,
+              padding: '20px 24px',
               textAlign: 'center',
               transition: 'all 0.3s ease',
               '&:hover': {
@@ -388,7 +450,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 fontSize: '16px',
                 fontWeight: 600,
                 color: '#FFF',
-                mb: 1,
+                mb: 0.5,
                 fontFamily: 'var(--font-primary)',
               }}
             >
@@ -412,7 +474,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
               WebkitBackdropFilter: 'blur(20px)',
               border: '2px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '20px',
-              padding: 3,
+              padding: '20px 24px',
               textAlign: 'center',
               transition: 'all 0.3s ease',
               '&:hover': {
@@ -428,7 +490,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 fontSize: '16px',
                 fontWeight: 600,
                 color: '#FFF',
-                mb: 1,
+                mb: 0.5,
                 fontFamily: 'var(--font-primary)',
               }}
             >
@@ -445,295 +507,80 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
             </Typography>
           </Box>
         </Box>
-
-        {/* Steps Preview */}
-        <Box
-          sx={{
-            mt: 6,
-            background: `linear-gradient(135deg, ${agentColor.primary}08, ${agentColor.primary}03)`,
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: `1px solid ${agentColor.primary}33`,
-            borderRadius: '16px',
-            padding: 3,
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: '14px',
-              fontWeight: 700,
-              color: agentColor.primary,
-              mb: 2,
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-            }}
-          >
-            Ce que nous allons configurer
-          </Typography>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-              gap: 1.5,
-              textAlign: 'left',
-            }}
-          >
-            {[
-              '✓ Votre contexte business',
-              '✓ Vos objectifs prioritaires',
-              '✓ Les fonctionnalités désirées',
-              '✓ Le ton de communication',
-              '✓ La base de connaissances (FAQ)',
-              '✓ Les langues supportées',
-              '✓ Les intégrations',
-              '✓ La finalisation',
-            ].map((item, index) => (
-              <Typography
-                key={index}
-                sx={{
-                  fontSize: '14px',
-                  color: 'rgba(255, 255, 255, 0.75)',
-                  fontFamily: 'var(--font-primary)',
-                }}
-              >
-                {item}
-              </Typography>
-            ))}
-          </Box>
-        </Box>
       </Box>
     </Box>
   );
 
   // Step 1: Context
   const renderStep1 = () => (
-    <Box>
-      <Typography
-        sx={{
-          fontSize: '15px',
-          fontWeight: 700,
-          mb: 3,
-          color: 'rgba(255, 255, 255, 0.75)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-        }}
-      >
-        Modèle commercial <span style={{ color: '#ef4444' }}>*</span>
-      </Typography>
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-          gap: 2.5,
-          mb: 5,
-        }}
-      >
-        {businessModels.map((model) => (
-          <Box
-            key={model.id}
-            onClick={() => setWizardData({ ...wizardData, businessModel: model.id })}
-            sx={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border:
-                wizardData.businessModel === model.id
-                  ? `2px solid ${agentColor.primary}`
-                  : '2px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: '20px',
-              padding: '32px 24px',
-              textAlign: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow:
-                wizardData.businessModel === model.id
-                  ? `0 8px 32px ${agentColor.glow}, 0 0 0 1px ${agentColor.primary}22 inset`
-                  : '0 4px 12px rgba(0, 0, 0, 0.1)',
-              '&:hover': {
-                background: 'rgba(255, 255, 255, 0.04)',
-                borderColor: `${agentColor.primary}88`,
-                transform: 'translateY(-4px)',
-                boxShadow: `0 12px 40px ${agentColor.glow}`,
-              },
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: '-100%',
-                width: '100%',
-                height: '100%',
-                background: `linear-gradient(90deg, transparent, ${agentColor.primary}11, transparent)`,
-                transition: 'left 0.5s ease',
-              },
-              '&:hover::before': {
-                left: '100%',
-              },
-            }}
-          >
-            <Box sx={{ fontSize: '52px', mb: 2.5, filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}>
-              {model.icon}
-            </Box>
-            <Typography
-              sx={{
-                fontSize: '19px',
-                fontWeight: 700,
-                mb: 1,
-                color: '#FFF',
-                fontFamily: 'var(--font-primary)',
-              }}
-            >
-              {model.title}
-            </Typography>
-            {model.description && (
-              <Typography
-                sx={{
-                  fontSize: '13px',
-                  color: 'rgba(255, 255, 255, 0.55)',
-                  fontFamily: 'var(--font-primary)',
-                }}
-              >
-                {model.description}
-              </Typography>
-            )}
-          </Box>
-        ))}
+    <Box sx={{ maxWidth: '700px', margin: '0 auto' }}>
+      {/* Business Model */}
+      <Box sx={{ mb: 5 }}>
+        <Typography
+          sx={{
+            fontSize: '15px',
+            fontWeight: 700,
+            mb: 2,
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontFamily: 'var(--font-primary)',
+          }}
+        >
+          Modèle commercial <span style={{ color: '#ef4444' }}>*</span>
+        </Typography>
+        <CustomSelect
+          value={wizardData.businessModel || ''}
+          onChange={(value) => setWizardData({ ...wizardData, businessModel: value })}
+          options={businessModels}
+          placeholder="Sélectionnez votre modèle commercial"
+          primaryColor={agentColor.primary}
+          glowColor={agentColor.glow}
+        />
       </Box>
 
-      <Typography
-        sx={{
-          fontSize: '15px',
-          fontWeight: 700,
-          mb: 3,
-          color: 'rgba(255, 255, 255, 0.75)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-        }}
-      >
-        Taille d'équipe <span style={{ color: '#ef4444' }}>*</span>
-      </Typography>
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-          gap: 2.5,
-          mb: 5,
-        }}
-      >
-        {teamSizes.map((size) => (
-          <Box
-            key={size.id}
-            onClick={() => setWizardData({ ...wizardData, teamSize: size.id })}
-            sx={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border:
-                wizardData.teamSize === size.id
-                  ? `2px solid ${agentColor.primary}`
-                  : '2px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: '20px',
-              padding: '32px 24px',
-              textAlign: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow:
-                wizardData.teamSize === size.id
-                  ? `0 8px 32px ${agentColor.glow}, 0 0 0 1px ${agentColor.primary}22 inset`
-                  : '0 4px 12px rgba(0, 0, 0, 0.1)',
-              '&:hover': {
-                background: 'rgba(255, 255, 255, 0.04)',
-                borderColor: `${agentColor.primary}88`,
-                transform: 'translateY(-4px)',
-                boxShadow: `0 12px 40px ${agentColor.glow}`,
-              },
-            }}
-          >
-            <Box sx={{ fontSize: '52px', mb: 2.5, filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}>
-              {size.icon}
-            </Box>
-            <Typography
-              sx={{
-                fontSize: '19px',
-                fontWeight: 700,
-                color: '#FFF',
-                fontFamily: 'var(--font-primary)',
-              }}
-            >
-              {size.title}
-            </Typography>
-          </Box>
-        ))}
+      {/* Team Size */}
+      <Box sx={{ mb: 5 }}>
+        <Typography
+          sx={{
+            fontSize: '15px',
+            fontWeight: 700,
+            mb: 2,
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontFamily: 'var(--font-primary)',
+          }}
+        >
+          Taille d'équipe <span style={{ color: '#ef4444' }}>*</span>
+        </Typography>
+        <CustomSelect
+          value={wizardData.teamSize || ''}
+          onChange={(value) => setWizardData({ ...wizardData, teamSize: value })}
+          options={teamSizes}
+          placeholder="Sélectionnez la taille de votre équipe"
+          primaryColor={agentColor.primary}
+          glowColor={agentColor.glow}
+        />
       </Box>
 
-      <Typography
-        sx={{
-          fontSize: '15px',
-          fontWeight: 700,
-          mb: 3,
-          color: 'rgba(255, 255, 255, 0.75)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-        }}
-      >
-        Volume de demandes <span style={{ color: '#ef4444' }}>*</span>
-      </Typography>
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-          gap: 2.5,
-        }}
-      >
-        {requestVolumes.map((volume) => (
-          <Box
-            key={volume.id}
-            onClick={() => setWizardData({ ...wizardData, requestVolume: volume.id })}
-            sx={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border:
-                wizardData.requestVolume === volume.id
-                  ? `2px solid ${agentColor.primary}`
-                  : '2px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: '20px',
-              padding: '32px 24px',
-              textAlign: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow:
-                wizardData.requestVolume === volume.id
-                  ? `0 8px 32px ${agentColor.glow}, 0 0 0 1px ${agentColor.primary}22 inset`
-                  : '0 4px 12px rgba(0, 0, 0, 0.1)',
-              '&:hover': {
-                background: 'rgba(255, 255, 255, 0.04)',
-                borderColor: `${agentColor.primary}88`,
-                transform: 'translateY(-4px)',
-                boxShadow: `0 12px 40px ${agentColor.glow}`,
-              },
-            }}
-          >
-            <Box sx={{ fontSize: '52px', mb: 2.5, filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}>
-              {volume.icon}
-            </Box>
-            <Typography
-              sx={{
-                fontSize: '19px',
-                fontWeight: 700,
-                color: '#FFF',
-                fontFamily: 'var(--font-primary)',
-              }}
-            >
-              {volume.title}
-            </Typography>
-          </Box>
-        ))}
+      {/* Request Volume */}
+      <Box>
+        <Typography
+          sx={{
+            fontSize: '15px',
+            fontWeight: 700,
+            mb: 2,
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontFamily: 'var(--font-primary)',
+          }}
+        >
+          Volume de demandes par jour <span style={{ color: '#ef4444' }}>*</span>
+        </Typography>
+        <CustomSelect
+          value={wizardData.requestVolume || ''}
+          onChange={(value) => setWizardData({ ...wizardData, requestVolume: value })}
+          options={requestVolumes}
+          placeholder="Sélectionnez le volume de demandes"
+          primaryColor={agentColor.primary}
+          glowColor={agentColor.glow}
+        />
       </Box>
     </Box>
   );
@@ -1981,31 +1828,33 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
             py: { xs: 6, md: 8 },
           }}
         >
-          {/* Step Header */}
-          <Box sx={{ mb: 6, textAlign: 'center' }}>
-            <Typography
-              sx={{
-                fontSize: { xs: '28px', md: '38px' },
-                fontWeight: 700,
-                mb: 2,
-                color: '#FFF',
-                fontFamily: 'var(--font-tertiary)',
-                textShadow: '0 4px 16px rgba(0,0,0,0.5)',
-                letterSpacing: '-0.5px',
-              }}
-            >
-              {currentStepData.title}
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: { xs: '15px', md: '17px' },
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontFamily: 'var(--font-primary)',
-              }}
-            >
-              {currentStepData.subtitle}
-            </Typography>
-          </Box>
+          {/* Step Header - Hide for welcome step */}
+          {currentStep !== 1 && (
+            <Box sx={{ mb: 6, textAlign: 'center' }}>
+              <Typography
+                sx={{
+                  fontSize: { xs: '28px', md: '38px' },
+                  fontWeight: 700,
+                  mb: 2,
+                  color: '#FFF',
+                  fontFamily: 'var(--font-tertiary)',
+                  textShadow: '0 4px 16px rgba(0,0,0,0.5)',
+                  letterSpacing: '-0.5px',
+                }}
+              >
+                {currentStepData.title}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: { xs: '15px', md: '17px' },
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontFamily: 'var(--font-primary)',
+                }}
+              >
+                {currentStepData.subtitle}
+              </Typography>
+            </Box>
+          )}
 
           {/* Step Content */}
           <Box ref={contentRef}>{renderStepContent()}</Box>
@@ -2025,12 +1874,15 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
               component="button"
               onClick={currentStep === 1 ? handleBackClick : handlePrev}
               sx={{
+                position: 'relative',
+                overflow: 'hidden',
                 padding: { xs: '14px 28px', md: '16px 36px' },
                 borderRadius: '16px',
-                background: 'rgba(255, 255, 255, 0.03)',
-                backdropFilter: 'blur(10px)',
+                background: 'rgba(255, 255, 255, 0.02)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
                 color: '#FFF',
-                border: '2px solid rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 cursor: 'pointer',
                 fontWeight: 700,
                 fontSize: { xs: '14px', md: '16px' },
@@ -2039,20 +1891,46 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 alignItems: 'center',
                 gap: 1.5,
                 fontFamily: 'var(--font-primary)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                 '&:hover': {
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
                   borderColor: `${agentColor.primary}66`,
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  transform: 'translateX(-4px)',
+                  transform: 'scale(1.05) translateX(-4px)',
+                  boxShadow: `0 6px 20px ${agentColor.glow}`,
+                  '& .shine-effect': {
+                    transform: 'translateX(100%)',
+                  },
+                },
+                '&:active': {
+                  transform: 'scale(0.98)',
                 },
               }}
             >
-              <FontAwesomeIcon icon="chevron-left" />
-              {currentStep === 1 ? 'Retour' : 'Précédent'}
+              {/* Shine effect */}
+              <Box
+                className="shine-effect"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.7s ease-out',
+                  pointerEvents: 'none',
+                }}
+              />
+              <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <FontAwesomeIcon icon="chevron-left" />
+                {currentStep === 1 ? 'Retour' : 'Précédent'}
+              </Box>
             </Box>
             <Box
               component="button"
               onClick={handleNext}
               sx={{
+                position: 'relative',
+                overflow: 'hidden',
                 padding: { xs: '14px 28px', md: '16px 36px' },
                 borderRadius: '16px',
                 background: `linear-gradient(135deg, ${agentColor.primary}, ${agentColor.primary}dd)`,
@@ -2068,21 +1946,41 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 gap: 1.5,
                 fontFamily: 'var(--font-primary)',
                 '&:hover': {
-                  transform: 'translateX(4px)',
+                  transform: 'scale(1.05) translateX(4px)',
                   boxShadow: `0 6px 28px ${agentColor.glow}`,
+                  '& .shine-effect': {
+                    transform: 'translateX(100%)',
+                  },
+                },
+                '&:active': {
+                  transform: 'scale(0.98)',
                 },
               }}
             >
-              {currentStep === totalSteps ? (
-                <>
-                  🎉 Créer l'agent
-                </>
-              ) : (
-                <>
-                  Suivant
-                  <FontAwesomeIcon icon="chevron-right" />
-                </>
-              )}
+              {/* Shine effect */}
+              <Box
+                className="shine-effect"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.7s ease-out',
+                  pointerEvents: 'none',
+                }}
+              />
+              <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                {currentStep === totalSteps ? (
+                  <>
+                    🎉 Créer l'agent
+                  </>
+                ) : (
+                  <>
+                    Suivant
+                    <FontAwesomeIcon icon="chevron-right" />
+                  </>
+                )}
+              </Box>
             </Box>
           </Box>
         </Container>
