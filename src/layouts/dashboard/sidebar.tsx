@@ -71,12 +71,12 @@ export function Sidebar() {
         top: 0,
         width: isCollapsed ? 80 : 280,
         height: '100vh',
-        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(10, 14, 39, 0.95) 100%)',
+        background: 'rgba(15, 23, 42, 0.25)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderRight: '1px solid rgba(93, 49, 248, 0.15)',
+        borderRight: '1px solid rgba(93, 49, 248, 0.12)',
         overflow: 'visible',
-        boxShadow: '0 0 40px rgba(93, 49, 248, 0.2), 0 8px 32px rgba(0, 0, 0, 0.4)',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
         zIndex: 1000,
         display: 'flex',
         flexDirection: 'column',
@@ -97,7 +97,9 @@ export function Sidebar() {
           cursor: 'pointer',
           transition: 'all 0.3s ease',
           '&:hover': {
-            backgroundColor: 'rgba(93, 49, 248, 0.1)',
+            background: 'rgba(93, 49, 248, 0.05)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
           },
           '&:hover .toggle-hint': {
             opacity: 1,
@@ -175,15 +177,19 @@ export function Sidebar() {
                   sx={{
                     borderRadius: '12px',
                     background: isActive
-                      ? 'linear-gradient(135deg, rgba(93, 49, 248, 0.3), rgba(168, 85, 247, 0.2))'
-                      : 'transparent',
-                    border: isActive ? '1px solid rgba(93, 49, 248, 0.4)' : '1px solid transparent',
+                      ? 'rgba(93, 49, 248, 0.25)'
+                      : 'rgba(255, 255, 255, 0.02)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    border: isActive ? '1px solid rgba(93, 49, 248, 0.4)' : '1px solid rgba(255, 255, 255, 0.05)',
                     color: '#FFF',
                     boxShadow: isActive ? '0 4px 16px rgba(93, 49, 248, 0.3)' : 'none',
                     '&:hover': {
                       background: isActive
-                        ? 'linear-gradient(135deg, rgba(93, 49, 248, 0.4), rgba(168, 85, 247, 0.3))'
-                        : 'rgba(255, 255, 255, 0.05)',
+                        ? 'rgba(93, 49, 248, 0.35)'
+                        : 'rgba(255, 255, 255, 0.08)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
                       border: '1px solid rgba(93, 49, 248, 0.3)',
                       transform: 'translateX(4px)',
                       '& .MuiListItemIcon-root': {
@@ -236,10 +242,10 @@ export function Sidebar() {
       <Box sx={{ p: 2 }}>
         <Divider
           sx={{
-            borderColor: 'rgba(93, 49, 248, 0.2)',
+            borderColor: 'rgba(93, 49, 248, 0.1)',
             mb: 2,
             '&::before, &::after': {
-              borderColor: 'rgba(93, 49, 248, 0.2)',
+              borderColor: 'rgba(93, 49, 248, 0.1)',
             },
           }}
         />
@@ -255,15 +261,19 @@ export function Sidebar() {
                   sx={{
                     borderRadius: '12px',
                     background: isActive
-                      ? 'linear-gradient(135deg, rgba(93, 49, 248, 0.3), rgba(168, 85, 247, 0.2))'
-                      : 'transparent',
-                    border: isActive ? '1px solid rgba(93, 49, 248, 0.4)' : '1px solid transparent',
+                      ? 'rgba(93, 49, 248, 0.25)'
+                      : 'rgba(255, 255, 255, 0.02)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    border: isActive ? '1px solid rgba(93, 49, 248, 0.4)' : '1px solid rgba(255, 255, 255, 0.05)',
                     color: '#FFF',
                     boxShadow: isActive ? '0 4px 16px rgba(93, 49, 248, 0.3)' : 'none',
                     '&:hover': {
                       background: isActive
-                        ? 'linear-gradient(135deg, rgba(93, 49, 248, 0.4), rgba(168, 85, 247, 0.3))'
-                        : 'rgba(255, 255, 255, 0.05)',
+                        ? 'rgba(93, 49, 248, 0.35)'
+                        : 'rgba(255, 255, 255, 0.08)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
                       border: '1px solid rgba(93, 49, 248, 0.3)',
                       transform: 'translateX(4px)',
                       '& .MuiListItemIcon-root': {

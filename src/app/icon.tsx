@@ -1,5 +1,8 @@
 import { ImageResponse } from 'next/og'
- 
+
+// Force dynamic rendering to avoid build-time issues on Windows
+export const runtime = 'edge'
+
 export const size = {
   width: 64,
   height: 64,
