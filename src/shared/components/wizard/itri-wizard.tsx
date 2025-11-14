@@ -56,6 +56,17 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
   const [showAddFaq, setShowAddFaq] = useState(false);
   const [newFaq, setNewFaq] = useState({ question: '', answer: '', category: '' });
 
+  // Availability schedule state
+  const [availabilityMode, setAvailabilityMode] = useState<'24/7' | 'business' | 'custom'>('custom');
+  const [schedules, setSchedules] = useState([
+    {
+      id: 1,
+      days: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven'],
+      startTime: '09:00',
+      endTime: '18:00',
+    },
+  ]);
+
   const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
 
   // Animate entrance
@@ -587,7 +598,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
 
   // Step 2: Objectives
   const renderStep2 = () => (
-    <Box>
+    <Box sx={{ maxWidth: '900px', margin: '0 auto' }}>
       <Box
         sx={{
           background: `linear-gradient(135deg, ${agentColor.primary}08, ${agentColor.primary}03)`,
@@ -602,13 +613,19 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
           gap: 2,
         }}
       >
-        <Box sx={{ fontSize: '28px' }}>💡</Box>
+        <Box sx={{ fontSize: '24px' }}>💡</Box>
         <Typography sx={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.6 }}>
           Sélectionnez jusqu'à 3 objectifs qui correspondent le mieux à vos priorités actuelles
         </Typography>
       </Box>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+          gap: 2.5,
+        }}
+      >
         {objectives.map((objective) => {
           const isSelected = wizardData.objectives.includes(objective.id);
           return (
@@ -616,70 +633,93 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
               key={objective.id}
               onClick={() => handleObjectiveToggle(objective.id)}
               sx={{
+                position: 'relative',
+                overflow: 'hidden',
                 display: 'flex',
-                alignItems: 'flex-start',
-                gap: 2.5,
-                padding: 3,
+                alignItems: 'center',
+                gap: 2,
+                padding: '16px 20px',
                 background: isSelected
                   ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
-                  : 'rgba(255, 255, 255, 0.02)',
+                  : 'rgba(255, 255, 255, 0.03)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                borderRadius: '20px',
+                borderRadius: '16px',
                 cursor: 'pointer',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 border: isSelected
                   ? `2px solid ${agentColor.primary}`
-                  : '2px solid rgba(255, 255, 255, 0.06)',
-                boxShadow: isSelected
-                  ? `0 8px 32px ${agentColor.glow}`
-                  : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  : '2px solid rgba(255, 255, 255, 0.08)',
+                boxShadow: isSelected ? `0 4px 16px ${agentColor.glow}` : 'none',
+                isolation: 'isolate',
+                willChange: 'transform',
                 '&:hover': {
                   background: isSelected
-                    ? `linear-gradient(135deg, ${agentColor.primary}15, ${agentColor.primary}08)`
-                    : 'rgba(255, 255, 255, 0.04)',
+                    ? `linear-gradient(135deg, ${agentColor.primary}18, ${agentColor.primary}08)`
+                    : 'rgba(255, 255, 255, 0.06)',
                   borderColor: `${agentColor.primary}66`,
-                  transform: 'translateX(4px)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: `0 6px 20px ${agentColor.glow}`,
+                  '& .shine-effect': {
+                    transform: 'translateX(100%)',
+                  },
                 },
               }}
             >
+              {/* Shine effect */}
+              <Box
+                className="shine-effect"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.7s ease-out',
+                  pointerEvents: 'none',
+                }}
+              />
+
               <Box
                 sx={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '8px',
-                  border: `2px solid ${isSelected ? agentColor.primary : 'rgba(255, 255, 255, 0.2)'}`,
+                  width: '22px',
+                  height: '22px',
+                  borderRadius: '6px',
+                  border: `2px solid ${isSelected ? agentColor.primary : 'rgba(255, 255, 255, 0.3)'}`,
                   background: isSelected ? agentColor.primary : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
-                  mt: 0.5,
                   transition: 'all 0.3s ease',
+                  position: 'relative',
+                  zIndex: 1,
                 }}
               >
                 {isSelected && (
-                  <FontAwesomeIcon icon="check" style={{ fontSize: '14px', color: '#FFF' }} />
+                  <FontAwesomeIcon icon="check" style={{ fontSize: '11px', color: '#FFF' }} />
                 )}
               </Box>
-              <Box sx={{ fontSize: '32px', flexShrink: 0 }}>{objective.icon}</Box>
-              <Box sx={{ flex: 1 }}>
+              <Box sx={{ fontSize: '28px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
+                {objective.icon}
+              </Box>
+              <Box sx={{ flex: 1, position: 'relative', zIndex: 1 }}>
                 <Typography
                   sx={{
-                    fontSize: '17px',
+                    fontSize: '15px',
                     fontWeight: 700,
                     mb: 0.5,
                     color: '#FFF',
                     fontFamily: 'var(--font-primary)',
+                    lineHeight: 1.3,
                   }}
                 >
                   {objective.title}
                 </Typography>
                 <Typography
                   sx={{
-                    fontSize: '14px',
+                    fontSize: '13px',
                     color: 'rgba(255, 255, 255, 0.65)',
-                    lineHeight: 1.6,
+                    lineHeight: 1.4,
                     fontFamily: 'var(--font-primary)',
                   }}
                 >
@@ -695,7 +735,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
 
   // Step 3: Features
   const renderStep3 = () => (
-    <Box>
+    <Box sx={{ maxWidth: '900px', margin: '0 auto' }}>
       <Box
         sx={{
           background: `linear-gradient(135deg, ${agentColor.primary}08, ${agentColor.primary}03)`,
@@ -710,13 +750,19 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
           gap: 2,
         }}
       >
-        <Box sx={{ fontSize: '28px' }}>⚙️</Box>
+        <Box sx={{ fontSize: '24px' }}>⚙️</Box>
         <Typography sx={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.6 }}>
-          Plus vous activez de fonctionnalités, plus votre agent sera puissant et polyvalent
+          Sélectionnez les fonctionnalités que votre agent doit avoir
         </Typography>
       </Box>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+          gap: 2.5,
+        }}
+      >
         {features.map((feature) => {
           const isSelected = wizardData.features.includes(feature.id);
           return (
@@ -724,70 +770,93 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
               key={feature.id}
               onClick={() => handleFeatureToggle(feature.id)}
               sx={{
+                position: 'relative',
+                overflow: 'hidden',
                 display: 'flex',
-                alignItems: 'flex-start',
-                gap: 2.5,
-                padding: 3,
+                alignItems: 'center',
+                gap: 2,
+                padding: '16px 20px',
                 background: isSelected
                   ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
-                  : 'rgba(255, 255, 255, 0.02)',
+                  : 'rgba(255, 255, 255, 0.03)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                borderRadius: '20px',
+                borderRadius: '16px',
                 cursor: 'pointer',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 border: isSelected
                   ? `2px solid ${agentColor.primary}`
-                  : '2px solid rgba(255, 255, 255, 0.06)',
-                boxShadow: isSelected
-                  ? `0 8px 32px ${agentColor.glow}`
-                  : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  : '2px solid rgba(255, 255, 255, 0.08)',
+                boxShadow: isSelected ? `0 4px 16px ${agentColor.glow}` : 'none',
+                isolation: 'isolate',
+                willChange: 'transform',
                 '&:hover': {
                   background: isSelected
-                    ? `linear-gradient(135deg, ${agentColor.primary}15, ${agentColor.primary}08)`
-                    : 'rgba(255, 255, 255, 0.04)',
+                    ? `linear-gradient(135deg, ${agentColor.primary}18, ${agentColor.primary}08)`
+                    : 'rgba(255, 255, 255, 0.06)',
                   borderColor: `${agentColor.primary}66`,
-                  transform: 'translateX(4px)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: `0 6px 20px ${agentColor.glow}`,
+                  '& .shine-effect': {
+                    transform: 'translateX(100%)',
+                  },
                 },
               }}
             >
+              {/* Shine effect */}
+              <Box
+                className="shine-effect"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.7s ease-out',
+                  pointerEvents: 'none',
+                }}
+              />
+
               <Box
                 sx={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '8px',
-                  border: `2px solid ${isSelected ? agentColor.primary : 'rgba(255, 255, 255, 0.2)'}`,
+                  width: '22px',
+                  height: '22px',
+                  borderRadius: '6px',
+                  border: `2px solid ${isSelected ? agentColor.primary : 'rgba(255, 255, 255, 0.3)'}`,
                   background: isSelected ? agentColor.primary : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
-                  mt: 0.5,
                   transition: 'all 0.3s ease',
+                  position: 'relative',
+                  zIndex: 1,
                 }}
               >
                 {isSelected && (
-                  <FontAwesomeIcon icon="check" style={{ fontSize: '14px', color: '#FFF' }} />
+                  <FontAwesomeIcon icon="check" style={{ fontSize: '11px', color: '#FFF' }} />
                 )}
               </Box>
-              <Box sx={{ fontSize: '32px', flexShrink: 0 }}>{feature.icon}</Box>
-              <Box sx={{ flex: 1 }}>
+              <Box sx={{ fontSize: '28px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
+                {feature.icon}
+              </Box>
+              <Box sx={{ flex: 1, position: 'relative', zIndex: 1 }}>
                 <Typography
                   sx={{
-                    fontSize: '17px',
+                    fontSize: '15px',
                     fontWeight: 700,
                     mb: 0.5,
                     color: '#FFF',
                     fontFamily: 'var(--font-primary)',
+                    lineHeight: 1.3,
                   }}
                 >
                   {feature.title}
                 </Typography>
                 <Typography
                   sx={{
-                    fontSize: '14px',
+                    fontSize: '13px',
                     color: 'rgba(255, 255, 255, 0.65)',
-                    lineHeight: 1.6,
+                    lineHeight: 1.4,
                     fontFamily: 'var(--font-primary)',
                   }}
                 >
@@ -801,68 +870,432 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
     </Box>
   );
 
-  // Step 4: Identity (Tone + FAQ)
+  // Step 4: Identity (Tone + Languages + FAQ + Availability)
   const renderStep4 = () => (
-    <Box>
-      <Typography
-        sx={{
-          fontSize: '15px',
-          fontWeight: 700,
-          mb: 3,
-          color: 'rgba(255, 255, 255, 0.75)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-        }}
-      >
-        Tonalité de communication <span style={{ color: '#ef4444' }}>*</span>
-      </Typography>
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' },
-          gap: 2,
-          mb: 6,
-        }}
-      >
-        {toneOptions.map((tone) => (
+    <Box sx={{ maxWidth: '800px', margin: '0 auto' }}>
+      {/* Tone Selection */}
+      <Box sx={{ mb: 5 }}>
+        <Typography
+          sx={{
+            fontSize: '15px',
+            fontWeight: 700,
+            mb: 2,
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontFamily: 'var(--font-primary)',
+          }}
+        >
+          Tonalité de communication <span style={{ color: '#ef4444' }}>*</span>
+        </Typography>
+        <CustomSelect
+          value={wizardData.tone || ''}
+          onChange={(value) => setWizardData({ ...wizardData, tone: value })}
+          options={toneOptions}
+          placeholder="Sélectionnez le ton de communication"
+          primaryColor={agentColor.primary}
+          glowColor={agentColor.glow}
+        />
+      </Box>
+
+      {/* Languages Selection */}
+      <Box sx={{ mb: 5 }}>
+        <Typography
+          sx={{
+            fontSize: '15px',
+            fontWeight: 700,
+            mb: 3,
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontFamily: 'var(--font-primary)',
+          }}
+        >
+          Langues supportées <span style={{ color: '#ef4444' }}>*</span>
+        </Typography>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' },
+            gap: 2,
+          }}
+        >
+          {languages.map((language) => {
+            const isSelected = wizardData.languages.includes(language.id);
+            return (
+              <Box
+                key={language.id}
+                onClick={() => handleLanguageToggle(language.id)}
+                sx={{
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  border: isSelected
+                    ? `2px solid ${agentColor.primary}`
+                    : '2px solid rgba(255, 255, 255, 0.06)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  fontWeight: 600,
+                  fontSize: '15px',
+                  color: '#FFF',
+                  fontFamily: 'var(--font-primary)',
+                  boxShadow: isSelected
+                    ? `0 4px 16px ${agentColor.glow}`
+                    : 'none',
+                  '&:hover': {
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    borderColor: `${agentColor.primary}66`,
+                    transform: 'translateY(-2px)',
+                  },
+                }}
+              >
+                {language.icon} {language.title}
+              </Box>
+            );
+          })}
+        </Box>
+      </Box>
+
+      {/* Availability Schedule */}
+      <Box sx={{ mb: 6 }}>
+        <Typography
+          sx={{
+            fontSize: '15px',
+            fontWeight: 700,
+            mb: 3,
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontFamily: 'var(--font-primary)',
+          }}
+        >
+          Horaire de disponibilité <span style={{ color: '#ef4444' }}>*</span>
+        </Typography>
+
+        {/* Preset Options */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
+            gap: 2,
+            mb: 3,
+          }}
+        >
           <Box
-            key={tone.id}
-            onClick={() => setWizardData({ ...wizardData, tone: tone.id })}
+            onClick={() => setAvailabilityMode('24/7')}
             sx={{
-              background: 'rgba(255, 255, 255, 0.02)',
+              background: availabilityMode === '24/7'
+                ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
+                : 'rgba(255, 255, 255, 0.03)',
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
-              border:
-                wizardData.tone === tone.id
-                  ? `2px solid ${agentColor.primary}`
-                  : '2px solid rgba(255, 255, 255, 0.06)',
+              border: availabilityMode === '24/7'
+                ? `2px solid ${agentColor.primary}`
+                : '2px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '16px',
               padding: '24px 16px',
               textAlign: 'center',
               cursor: 'pointer',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              boxShadow:
-                wizardData.tone === tone.id
-                  ? `0 8px 32px ${agentColor.glow}`
-                  : '0 4px 12px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.3s ease',
+              boxShadow: availabilityMode === '24/7' ? `0 4px 16px ${agentColor.glow}` : 'none',
               '&:hover': {
-                background: 'rgba(255, 255, 255, 0.04)',
+                background: availabilityMode === '24/7'
+                  ? `linear-gradient(135deg, ${agentColor.primary}18, ${agentColor.primary}08)`
+                  : 'rgba(255, 255, 255, 0.06)',
                 borderColor: `${agentColor.primary}66`,
-                transform: 'translateY(-4px)',
+                transform: 'translateY(-2px)',
               },
             }}
           >
-            <Box sx={{ fontSize: '40px', mb: 1.5 }}>{tone.icon}</Box>
-            <Typography sx={{ fontSize: '15px', fontWeight: 700, mb: 0.5, color: '#FFF' }}>
-              {tone.title}
+            <Box sx={{ fontSize: '36px', mb: 1.5 }}>🌐</Box>
+            <Typography sx={{ fontSize: '15px', fontWeight: 700, color: '#FFF', fontFamily: 'var(--font-primary)' }}>
+              24h/24, 7j/7
             </Typography>
-            {tone.description && (
-              <Typography sx={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.5)' }}>
-                {tone.description}
-              </Typography>
-            )}
           </Box>
-        ))}
+
+          <Box
+            onClick={() => setAvailabilityMode('business')}
+            sx={{
+              background: availabilityMode === 'business'
+                ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
+                : 'rgba(255, 255, 255, 0.03)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: availabilityMode === 'business'
+                ? `2px solid ${agentColor.primary}`
+                : '2px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '16px',
+              padding: '24px 16px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: availabilityMode === 'business' ? `0 4px 16px ${agentColor.glow}` : 'none',
+              '&:hover': {
+                background: availabilityMode === 'business'
+                  ? `linear-gradient(135deg, ${agentColor.primary}18, ${agentColor.primary}08)`
+                  : 'rgba(255, 255, 255, 0.06)',
+                borderColor: `${agentColor.primary}66`,
+                transform: 'translateY(-2px)',
+              },
+            }}
+          >
+            <Box sx={{ fontSize: '36px', mb: 1.5 }}>🏢</Box>
+            <Typography sx={{ fontSize: '15px', fontWeight: 700, color: '#FFF', fontFamily: 'var(--font-primary)' }}>
+              Heures bureau
+            </Typography>
+            <Typography sx={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', mt: 0.5 }}>
+              9h-18h
+            </Typography>
+          </Box>
+
+          <Box
+            onClick={() => setAvailabilityMode('custom')}
+            sx={{
+              background: availabilityMode === 'custom'
+                ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
+                : 'rgba(255, 255, 255, 0.03)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: availabilityMode === 'custom'
+                ? `2px solid ${agentColor.primary}`
+                : '2px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '16px',
+              padding: '24px 16px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: availabilityMode === 'custom' ? `0 4px 16px ${agentColor.glow}` : 'none',
+              '&:hover': {
+                background: availabilityMode === 'custom'
+                  ? `linear-gradient(135deg, ${agentColor.primary}18, ${agentColor.primary}08)`
+                  : 'rgba(255, 255, 255, 0.06)',
+                borderColor: `${agentColor.primary}66`,
+                transform: 'translateY(-2px)',
+              },
+            }}
+          >
+            <Box sx={{ fontSize: '36px', mb: 1.5 }}>⚡</Box>
+            <Typography sx={{ fontSize: '15px', fontWeight: 700, color: '#FFF', fontFamily: 'var(--font-primary)' }}>
+              Personnalisé
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Custom Schedules Section */}
+        {availabilityMode === 'custom' && (
+          <Box>
+            <Typography
+              sx={{
+                fontSize: '14px',
+                fontWeight: 600,
+                mb: 3,
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontFamily: 'var(--font-primary)',
+              }}
+            >
+              Définir les créneaux horaires personnalisés
+            </Typography>
+
+            {schedules.map((schedule, index) => (
+              <Box
+                key={schedule.id}
+                sx={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  border: '2px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: 3,
+                  mb: 2,
+                }}
+              >
+                {/* Schedule Header */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Typography sx={{ fontSize: '16px', fontWeight: 700, color: '#FFF', fontFamily: 'var(--font-primary)' }}>
+                    Créneau {index + 1}
+                  </Typography>
+                  {schedules.length > 1 && (
+                    <Box
+                      component="button"
+                      onClick={() => setSchedules(schedules.filter((s) => s.id !== schedule.id))}
+                      sx={{
+                        background: '#ef4444',
+                        color: '#FFF',
+                        padding: '8px 16px',
+                        borderRadius: '10px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        fontSize: '13px',
+                        fontFamily: 'var(--font-primary)',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          background: '#dc2626',
+                        },
+                      }}
+                    >
+                      🗑️ Supprimer
+                    </Box>
+                  )}
+                </Box>
+
+                {/* Days Selection */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography sx={{ fontSize: '14px', fontWeight: 600, mb: 1.5, color: 'rgba(255, 255, 255, 0.8)', fontFamily: 'var(--font-primary)' }}>
+                    Jours de la semaine
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => {
+                      const isActive = schedule.days.includes(day);
+                      return (
+                        <Box
+                          key={day}
+                          onClick={() => {
+                            const newSchedules = [...schedules];
+                            const currentSchedule = newSchedules[index];
+                            if (isActive) {
+                              currentSchedule.days = currentSchedule.days.filter((d) => d !== day);
+                            } else {
+                              currentSchedule.days = [...currentSchedule.days, day];
+                            }
+                            setSchedules(newSchedules);
+                          }}
+                          sx={{
+                            padding: '10px 16px',
+                            background: isActive ? agentColor.primary : 'rgba(255, 255, 255, 0.05)',
+                            border: `2px solid ${isActive ? agentColor.primary : 'rgba(255, 255, 255, 0.1)'}`,
+                            borderRadius: '10px',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            color: '#FFF',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            fontFamily: 'var(--font-primary)',
+                            '&:hover': {
+                              background: isActive ? agentColor.primary : `${agentColor.primary}22`,
+                              borderColor: agentColor.primary,
+                            },
+                          }}
+                        >
+                          {day}
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Box>
+
+                {/* Time Inputs */}
+                <Box>
+                  <Typography sx={{ fontSize: '14px', fontWeight: 600, mb: 1.5, color: 'rgba(255, 255, 255, 0.8)', fontFamily: 'var(--font-primary)' }}>
+                    Heures d'ouverture
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography sx={{ fontSize: '12px', mb: 1, color: 'rgba(255, 255, 255, 0.7)', fontFamily: 'var(--font-primary)' }}>
+                        De
+                      </Typography>
+                      <Box
+                        component="input"
+                        type="time"
+                        value={schedule.startTime}
+                        onChange={(e) => {
+                          const newSchedules = [...schedules];
+                          newSchedules[index].startTime = e.target.value;
+                          setSchedules(newSchedules);
+                        }}
+                        sx={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(0, 0, 0, 0.3)',
+                          backdropFilter: 'blur(10px)',
+                          border: '2px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                          color: '#FFF',
+                          fontSize: '14px',
+                          fontFamily: 'var(--font-primary)',
+                          fontWeight: 600,
+                          '&:focus': {
+                            outline: 'none',
+                            borderColor: agentColor.primary,
+                            boxShadow: `0 0 0 2px ${agentColor.glow}`,
+                          },
+                        }}
+                      />
+                    </Box>
+                    <Typography sx={{ fontSize: '18px', color: 'rgba(255, 255, 255, 0.5)', pt: 3 }}>à</Typography>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography sx={{ fontSize: '12px', mb: 1, color: 'rgba(255, 255, 255, 0.7)', fontFamily: 'var(--font-primary)' }}>
+                        À
+                      </Typography>
+                      <Box
+                        component="input"
+                        type="time"
+                        value={schedule.endTime}
+                        onChange={(e) => {
+                          const newSchedules = [...schedules];
+                          newSchedules[index].endTime = e.target.value;
+                          setSchedules(newSchedules);
+                        }}
+                        sx={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: 'rgba(0, 0, 0, 0.3)',
+                          backdropFilter: 'blur(10px)',
+                          border: '2px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                          color: '#FFF',
+                          fontSize: '14px',
+                          fontFamily: 'var(--font-primary)',
+                          fontWeight: 600,
+                          '&:focus': {
+                            outline: 'none',
+                            borderColor: agentColor.primary,
+                            boxShadow: `0 0 0 2px ${agentColor.glow}`,
+                          },
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            ))}
+
+            {/* Add Schedule Button */}
+            <Box
+              component="button"
+              onClick={() => {
+                const newId = Math.max(...schedules.map((s) => s.id)) + 1;
+                setSchedules([
+                  ...schedules,
+                  {
+                    id: newId,
+                    days: [],
+                    startTime: '09:00',
+                    endTime: '18:00',
+                  },
+                ]);
+              }}
+              sx={{
+                background: `linear-gradient(135deg, ${agentColor.primary}, ${agentColor.primary}dd)`,
+                color: '#FFF',
+                padding: '12px 24px',
+                borderRadius: '12px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '14px',
+                fontFamily: 'var(--font-primary)',
+                transition: 'all 0.3s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: `0 6px 20px ${agentColor.glow}`,
+                },
+              }}
+            >
+              + Ajouter un créneau
+            </Box>
+          </Box>
+        )}
       </Box>
 
       <Box
@@ -1186,64 +1619,42 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
     </Box>
   );
 
-  // Step 5: Configuration (Languages)
+  // Step 5: Configuration (Notifications - Placeholder)
   const renderStep5 = () => (
-    <Box>
-      <Typography
-        sx={{
-          fontSize: '15px',
-          fontWeight: 700,
-          mb: 3,
-          color: 'rgba(255, 255, 255, 0.75)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-        }}
-      >
-        Langues supportées <span style={{ color: '#ef4444' }}>*</span>
-      </Typography>
+    <Box sx={{ maxWidth: '800px', margin: '0 auto' }}>
       <Box
         sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' },
-          gap: 2,
+          background: `linear-gradient(135deg, ${agentColor.primary}08, ${agentColor.primary}03)`,
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: `1px solid ${agentColor.primary}33`,
+          borderRadius: '16px',
+          padding: 4,
+          textAlign: 'center',
         }}
       >
-        {languages.map((language) => {
-          const isSelected = wizardData.languages.includes(language.id);
-          return (
-            <Box
-              key={language.id}
-              onClick={() => handleLanguageToggle(language.id)}
-              sx={{
-                background: 'rgba(255, 255, 255, 0.02)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: isSelected
-                  ? `2px solid ${agentColor.primary}`
-                  : '2px solid rgba(255, 255, 255, 0.06)',
-                borderRadius: '16px',
-                padding: '20px',
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                fontWeight: 600,
-                fontSize: '15px',
-                color: '#FFF',
-                fontFamily: 'var(--font-primary)',
-                boxShadow: isSelected
-                  ? `0 8px 32px ${agentColor.glow}`
-                  : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                '&:hover': {
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  borderColor: `${agentColor.primary}66`,
-                  transform: 'translateY(-2px)',
-                },
-              }}
-            >
-              {language.icon} {language.title}
-            </Box>
-          );
-        })}
+        <Box sx={{ fontSize: '64px', mb: 2 }}>🔔</Box>
+        <Typography
+          sx={{
+            fontSize: '24px',
+            fontWeight: 700,
+            mb: 2,
+            color: '#FFF',
+            fontFamily: 'var(--font-tertiary)',
+          }}
+        >
+          Configuration opérationnelle
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: '16px',
+            color: 'rgba(255, 255, 255, 0.7)',
+            lineHeight: 1.8,
+            fontFamily: 'var(--font-primary)',
+          }}
+        >
+          Cette section permettra de configurer les notifications et les paramètres avancés de votre agent.
+        </Typography>
       </Box>
     </Box>
   );
