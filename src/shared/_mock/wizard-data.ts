@@ -39,18 +39,24 @@ export const wizardSteps: WizardStep[] = [
   },
   {
     id: 6,
-    label: 'Configuration',
-    title: '🔔 Configuration opérationnelle',
-    subtitle: 'Configurez les notifications et les paramètres de fonctionnement',
+    label: 'Notifications',
+    title: '🔔 Notifications',
+    subtitle: 'Configurez les alertes et notifications',
   },
   {
     id: 7,
+    label: 'Configuration',
+    title: '⚙️ Configuration opérationnelle',
+    subtitle: 'Paramètres avancés de fonctionnement',
+  },
+  {
+    id: 8,
     label: 'Intégrations',
     title: '🔗 Sélectionnez vos intégrations',
     subtitle: 'Connectez les outils que votre agent utilisera',
   },
   {
-    id: 8,
+    id: 9,
     label: 'Finalisation',
     title: '🔧 Configuration des intégrations',
     subtitle: 'Configurez les intégrations que vous avez sélectionnées',

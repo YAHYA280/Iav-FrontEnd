@@ -67,6 +67,47 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
     },
   ]);
 
+  // Notifications state
+  const [notifications, setNotifications] = useState([
+    {
+      id: 'new-ticket',
+      icon: '🎫',
+      title: 'Nouveau ticket créé',
+      description: 'Alerte immédiate quand un ticket est créé',
+      enabled: true,
+    },
+    {
+      id: 'pending-ticket',
+      icon: '⏰',
+      title: 'Ticket en attente',
+      description: 'Ticket sans réponse',
+      enabled: true,
+      delay: '1 heure',
+    },
+    {
+      id: 'reopened-ticket',
+      icon: '🔄',
+      title: 'Ticket réouvert',
+      description: 'Client répond après fermeture',
+      enabled: true,
+    },
+    {
+      id: 'integration-disconnected',
+      icon: '⚠️',
+      title: 'Intégration déconnectée',
+      description: 'Alerte problème intégration',
+      enabled: true,
+    },
+  ]);
+
+  // Global notification channels (shared by all notification types)
+  const [notificationChannels, setNotificationChannels] = useState({
+    activeChannel: 'email',
+    email: 'support@example.com',
+    whatsapp: '',
+    telegram: '',
+  });
+
   const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
 
   // Animate entrance
@@ -272,11 +313,13 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
       case 5:
         return renderStep4();
       case 6:
-        return renderStep5();
+        return renderStep5Notifications();
       case 7:
-        return renderStep6();
+        return renderStep6Config();
       case 8:
-        return renderStep7();
+        return renderStep8();
+      case 9:
+        return renderStep9();
       default:
         return null;
     }
@@ -923,6 +966,8 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 key={language.id}
                 onClick={() => handleLanguageToggle(language.id)}
                 sx={{
+                  position: 'relative',
+                  overflow: 'hidden',
                   background: 'rgba(255, 255, 255, 0.02)',
                   backdropFilter: 'blur(20px)',
                   WebkitBackdropFilter: 'blur(20px)',
@@ -944,11 +989,28 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                   '&:hover': {
                     background: 'rgba(255, 255, 255, 0.04)',
                     borderColor: `${agentColor.primary}66`,
-                    transform: 'translateY(-2px)',
+                    transform: 'scale(1.05) translateY(-2px)',
+                    '& .shine-effect': {
+                      transform: 'translateX(100%)',
+                    },
                   },
                 }}
               >
-                {language.icon} {language.title}
+                {/* Shine effect */}
+                <Box
+                  className="shine-effect"
+                  sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
+                    transform: 'translateX(-100%)',
+                    transition: 'transform 0.7s ease-out',
+                    pointerEvents: 'none',
+                  }}
+                />
+                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                  {language.icon} {language.title}
+                </Box>
               </Box>
             );
           })}
@@ -981,6 +1043,8 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
           <Box
             onClick={() => setAvailabilityMode('24/7')}
             sx={{
+              position: 'relative',
+              overflow: 'hidden',
               background: availabilityMode === '24/7'
                 ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
                 : 'rgba(255, 255, 255, 0.03)',
@@ -1000,19 +1064,38 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                   ? `linear-gradient(135deg, ${agentColor.primary}18, ${agentColor.primary}08)`
                   : 'rgba(255, 255, 255, 0.06)',
                 borderColor: `${agentColor.primary}66`,
-                transform: 'translateY(-2px)',
+                transform: 'scale(1.05) translateY(-2px)',
+                '& .shine-effect': {
+                  transform: 'translateX(100%)',
+                },
               },
             }}
           >
-            <Box sx={{ fontSize: '36px', mb: 1.5 }}>🌐</Box>
-            <Typography sx={{ fontSize: '15px', fontWeight: 700, color: '#FFF', fontFamily: 'var(--font-primary)' }}>
-              24h/24, 7j/7
-            </Typography>
+            {/* Shine effect */}
+            <Box
+              className="shine-effect"
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
+                transform: 'translateX(-100%)',
+                transition: 'transform 0.7s ease-out',
+                pointerEvents: 'none',
+              }}
+            />
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Box sx={{ fontSize: '36px', mb: 1.5 }}>🌐</Box>
+              <Typography sx={{ fontSize: '15px', fontWeight: 700, color: '#FFF', fontFamily: 'var(--font-primary)' }}>
+                24h/24, 7j/7
+              </Typography>
+            </Box>
           </Box>
 
           <Box
             onClick={() => setAvailabilityMode('business')}
             sx={{
+              position: 'relative',
+              overflow: 'hidden',
               background: availabilityMode === 'business'
                 ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
                 : 'rgba(255, 255, 255, 0.03)',
@@ -1032,22 +1115,41 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                   ? `linear-gradient(135deg, ${agentColor.primary}18, ${agentColor.primary}08)`
                   : 'rgba(255, 255, 255, 0.06)',
                 borderColor: `${agentColor.primary}66`,
-                transform: 'translateY(-2px)',
+                transform: 'scale(1.05) translateY(-2px)',
+                '& .shine-effect': {
+                  transform: 'translateX(100%)',
+                },
               },
             }}
           >
-            <Box sx={{ fontSize: '36px', mb: 1.5 }}>🏢</Box>
-            <Typography sx={{ fontSize: '15px', fontWeight: 700, color: '#FFF', fontFamily: 'var(--font-primary)' }}>
-              Heures bureau
-            </Typography>
-            <Typography sx={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', mt: 0.5 }}>
-              9h-18h
-            </Typography>
+            {/* Shine effect */}
+            <Box
+              className="shine-effect"
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
+                transform: 'translateX(-100%)',
+                transition: 'transform 0.7s ease-out',
+                pointerEvents: 'none',
+              }}
+            />
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Box sx={{ fontSize: '36px', mb: 1.5 }}>🏢</Box>
+              <Typography sx={{ fontSize: '15px', fontWeight: 700, color: '#FFF', fontFamily: 'var(--font-primary)' }}>
+                Heures bureau
+              </Typography>
+              <Typography sx={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', mt: 0.5 }}>
+                9h-18h
+              </Typography>
+            </Box>
           </Box>
 
           <Box
             onClick={() => setAvailabilityMode('custom')}
             sx={{
+              position: 'relative',
+              overflow: 'hidden',
               background: availabilityMode === 'custom'
                 ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
                 : 'rgba(255, 255, 255, 0.03)',
@@ -1067,14 +1169,31 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                   ? `linear-gradient(135deg, ${agentColor.primary}18, ${agentColor.primary}08)`
                   : 'rgba(255, 255, 255, 0.06)',
                 borderColor: `${agentColor.primary}66`,
-                transform: 'translateY(-2px)',
+                transform: 'scale(1.05) translateY(-2px)',
+                '& .shine-effect': {
+                  transform: 'translateX(100%)',
+                },
               },
             }}
           >
-            <Box sx={{ fontSize: '36px', mb: 1.5 }}>⚡</Box>
-            <Typography sx={{ fontSize: '15px', fontWeight: 700, color: '#FFF', fontFamily: 'var(--font-primary)' }}>
-              Personnalisé
-            </Typography>
+            {/* Shine effect */}
+            <Box
+              className="shine-effect"
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
+                transform: 'translateX(-100%)',
+                transition: 'transform 0.7s ease-out',
+                pointerEvents: 'none',
+              }}
+            />
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Box sx={{ fontSize: '36px', mb: 1.5 }}>⚡</Box>
+              <Typography sx={{ fontSize: '15px', fontWeight: 700, color: '#FFF', fontFamily: 'var(--font-primary)' }}>
+                Personnalisé
+              </Typography>
+            </Box>
           </Box>
         </Box>
 
@@ -1116,6 +1235,8 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                       component="button"
                       onClick={() => setSchedules(schedules.filter((s) => s.id !== schedule.id))}
                       sx={{
+                        position: 'relative',
+                        overflow: 'hidden',
                         background: '#ef4444',
                         color: '#FFF',
                         padding: '8px 16px',
@@ -1128,10 +1249,28 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                         transition: 'all 0.3s ease',
                         '&:hover': {
                           background: '#dc2626',
+                          transform: 'scale(1.05)',
+                          '& .shine-effect': {
+                            transform: 'translateX(100%)',
+                          },
                         },
                       }}
                     >
-                      🗑️ Supprimer
+                      {/* Shine effect */}
+                      <Box
+                        className="shine-effect"
+                        sx={{
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                          transform: 'translateX(-100%)',
+                          transition: 'transform 0.7s ease-out',
+                          pointerEvents: 'none',
+                        }}
+                      />
+                      <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        🗑️ Supprimer
+                      </Box>
                     </Box>
                   )}
                 </Box>
@@ -1158,6 +1297,8 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                             setSchedules(newSchedules);
                           }}
                           sx={{
+                            position: 'relative',
+                            overflow: 'hidden',
                             padding: '10px 16px',
                             background: isActive ? agentColor.primary : 'rgba(255, 255, 255, 0.05)',
                             border: `2px solid ${isActive ? agentColor.primary : 'rgba(255, 255, 255, 0.1)'}`,
@@ -1171,10 +1312,28 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                             '&:hover': {
                               background: isActive ? agentColor.primary : `${agentColor.primary}22`,
                               borderColor: agentColor.primary,
+                              transform: 'scale(1.05)',
+                              '& .shine-effect': {
+                                transform: 'translateX(100%)',
+                              },
                             },
                           }}
                         >
-                          {day}
+                          {/* Shine effect */}
+                          <Box
+                            className="shine-effect"
+                            sx={{
+                              position: 'absolute',
+                              inset: 0,
+                              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                              transform: 'translateX(-100%)',
+                              transition: 'transform 0.7s ease-out',
+                              pointerEvents: 'none',
+                            }}
+                          />
+                          <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            {day}
+                          </Box>
                         </Box>
                       );
                     })}
@@ -1273,6 +1432,8 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 ]);
               }}
               sx={{
+                position: 'relative',
+                overflow: 'hidden',
                 background: `linear-gradient(135deg, ${agentColor.primary}, ${agentColor.primary}dd)`,
                 color: '#FFF',
                 padding: '12px 24px',
@@ -1287,12 +1448,29 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 alignItems: 'center',
                 gap: 1,
                 '&:hover': {
-                  transform: 'translateY(-2px)',
+                  transform: 'scale(1.05) translateY(-2px)',
                   boxShadow: `0 6px 20px ${agentColor.glow}`,
+                  '& .shine-effect': {
+                    transform: 'translateX(100%)',
+                  },
                 },
               }}
             >
-              + Ajouter un créneau
+              {/* Shine effect */}
+              <Box
+                className="shine-effect"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.7s ease-out',
+                  pointerEvents: 'none',
+                }}
+              />
+              <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                + Ajouter un créneau
+              </Box>
             </Box>
           </Box>
         )}
@@ -1322,6 +1500,8 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
           component="button"
           onClick={() => setShowAddFaq(!showAddFaq)}
           sx={{
+            position: 'relative',
+            overflow: 'hidden',
             background: `linear-gradient(135deg, ${agentColor.primary}, ${agentColor.primary}dd)`,
             color: '#FFF',
             padding: '10px 20px',
@@ -1336,13 +1516,30 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
             gap: 1,
             boxShadow: `0 4px 12px ${agentColor.glow}`,
             '&:hover': {
-              transform: 'translateY(-2px)',
+              transform: 'scale(1.05) translateY(-2px)',
               boxShadow: `0 6px 20px ${agentColor.glow}`,
+              '& .shine-effect': {
+                transform: 'translateX(100%)',
+              },
             },
           }}
         >
-          <FontAwesomeIcon icon="plus" />
-          Ajouter
+          {/* Shine effect */}
+          <Box
+            className="shine-effect"
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+              transform: 'translateX(-100%)',
+              transition: 'transform 0.7s ease-out',
+              pointerEvents: 'none',
+            }}
+          />
+          <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <FontAwesomeIcon icon="plus" />
+            Ajouter
+          </Box>
         </Box>
       </Box>
 
@@ -1482,6 +1679,8 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
               component="button"
               onClick={handleAddFaq}
               sx={{
+                position: 'relative',
+                overflow: 'hidden',
                 flex: 1,
                 background: '#10b981',
                 color: '#FFF',
@@ -1494,16 +1693,35 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 transition: 'all 0.3s ease',
                 '&:hover': {
                   background: '#059669',
-                  transform: 'translateY(-2px)',
+                  transform: 'scale(1.05) translateY(-2px)',
+                  '& .shine-effect': {
+                    transform: 'translateX(100%)',
+                  },
                 },
               }}
             >
-              ✓ Enregistrer
+              {/* Shine effect */}
+              <Box
+                className="shine-effect"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.7s ease-out',
+                  pointerEvents: 'none',
+                }}
+              />
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+                ✓ Enregistrer
+              </Box>
             </Box>
             <Box
               component="button"
               onClick={() => setShowAddFaq(false)}
               sx={{
+                position: 'relative',
+                overflow: 'hidden',
                 flex: 1,
                 background: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(10px)',
@@ -1518,10 +1736,28 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 '&:hover': {
                   borderColor: `${agentColor.primary}66`,
                   background: 'rgba(255, 255, 255, 0.08)',
+                  transform: 'scale(1.05)',
+                  '& .shine-effect': {
+                    transform: 'translateX(100%)',
+                  },
                 },
               }}
             >
-              Annuler
+              {/* Shine effect */}
+              <Box
+                className="shine-effect"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.7s ease-out',
+                  pointerEvents: 'none',
+                }}
+              />
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+                Annuler
+              </Box>
             </Box>
           </Box>
         </Box>
@@ -1585,6 +1821,8 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                 component="button"
                 onClick={() => handleDeleteFaq(faq.id)}
                 sx={{
+                  position: 'relative',
+                  overflow: 'hidden',
                   background: '#ef4444',
                   color: '#FFF',
                   padding: '8px 16px',
@@ -1596,11 +1834,28 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
                   transition: 'all 0.3s ease',
                   '&:hover': {
                     background: '#dc2626',
-                    transform: 'translateY(-2px)',
+                    transform: 'scale(1.05) translateY(-2px)',
+                    '& .shine-effect': {
+                      transform: 'translateX(100%)',
+                    },
                   },
                 }}
               >
-                🗑️ Supprimer
+                {/* Shine effect */}
+                <Box
+                  className="shine-effect"
+                  sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                    transform: 'translateX(-100%)',
+                    transition: 'transform 0.7s ease-out',
+                    pointerEvents: 'none',
+                  }}
+                />
+                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                  🗑️ Supprimer
+                </Box>
               </Box>
             </Box>
             <Typography
@@ -1619,8 +1874,405 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
     </Box>
   );
 
-  // Step 5: Configuration (Notifications - Placeholder)
-  const renderStep5 = () => (
+  // Step 5: Notifications
+  const renderStep5Notifications = () => {
+    const pendingTicketNotif = notifications.find((n) => n.id === 'pending-ticket');
+
+    return (
+      <Box sx={{ maxWidth: '900px', margin: '0 auto' }}>
+        {/* Notification Types Grid */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+            gap: 2.5,
+            mb: 5,
+          }}
+        >
+          {notifications.map((notif, index) => (
+            <Box
+              key={notif.id}
+              sx={{
+                position: 'relative',
+                overflow: 'hidden',
+                background: notif.enabled
+                  ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
+                  : 'rgba(255, 255, 255, 0.03)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: notif.enabled
+                  ? `2px solid ${agentColor.primary}66`
+                  : '2px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                padding: 2.5,
+                transition: 'all 0.3s ease',
+                isolation: 'isolate',
+                willChange: 'transform',
+                cursor: 'pointer',
+                '&:hover': {
+                  borderColor: `${agentColor.primary}88`,
+                  transform: 'translateX(4px)',
+                  '& .shine-effect': {
+                    transform: 'translateX(100%)',
+                  },
+                },
+              }}
+              onClick={() => {
+                const newNotifs = [...notifications];
+                newNotifs[index].enabled = !newNotifs[index].enabled;
+                setNotifications(newNotifs);
+              }}
+            >
+              {/* Shine effect */}
+              <Box
+                className="shine-effect"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent)',
+                  transform: 'translateX(-100%)',
+                  transition: 'transform 0.7s ease-out',
+                  pointerEvents: 'none',
+                }}
+              />
+
+              <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                {/* Toggle Switch */}
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: '48px',
+                    height: '24px',
+                    background: notif.enabled ? '#10b981' : 'rgba(255, 255, 255, 0.1)',
+                    border: `2px solid ${notif.enabled ? '#10b981' : 'rgba(255, 255, 255, 0.2)'}`,
+                    borderRadius: '16px',
+                    flexShrink: 0,
+                    mt: 0.25,
+                    transition: 'all 0.3s ease',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      width: '16px',
+                      height: '16px',
+                      background: '#FFF',
+                      borderRadius: '50%',
+                      top: '2px',
+                      left: notif.enabled ? '24px' : '2px',
+                      transition: 'all 0.3s ease',
+                    },
+                  }}
+                />
+
+                <Box sx={{ flex: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+                    <Box sx={{ fontSize: '24px' }}>{notif.icon}</Box>
+                    <Typography
+                      sx={{
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        color: '#FFF',
+                        fontFamily: 'var(--font-primary)',
+                      }}
+                    >
+                      {notif.title}
+                    </Typography>
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: '13px',
+                      color: 'rgba(255, 255, 255, 0.65)',
+                      lineHeight: 1.5,
+                      fontFamily: 'var(--font-primary)',
+                    }}
+                  >
+                    {notif.description}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+
+        {/* Delay selector for pending ticket (if enabled) */}
+        {pendingTicketNotif?.enabled && (
+          <Box
+            sx={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '2px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '16px',
+              padding: 3,
+              mb: 4,
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: '14px',
+                fontWeight: 600,
+                mb: 2,
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontFamily: 'var(--font-primary)',
+              }}
+            >
+              ⏰ Délai avant alerte pour "Ticket en attente"
+            </Typography>
+            <Select
+              fullWidth
+              value={pendingTicketNotif.delay || '1 heure'}
+              onChange={(e) => {
+                const newNotifs = [...notifications];
+                const index = newNotifs.findIndex((n) => n.id === 'pending-ticket');
+                if (index !== -1) {
+                  newNotifs[index].delay = e.target.value;
+                  setNotifications(newNotifs);
+                }
+              }}
+              sx={{
+                background: 'rgba(0, 0, 0, 0.3)',
+                backdropFilter: 'blur(10px)',
+                color: '#FFF',
+                borderRadius: '12px',
+                fontFamily: 'var(--font-primary)',
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'rgba(255, 255, 255, 0.1)',
+                  borderWidth: '2px',
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: `${agentColor.primary}66`,
+                },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: agentColor.primary,
+                },
+              }}
+            >
+              <MenuItem value="30 minutes">30 minutes</MenuItem>
+              <MenuItem value="1 heure">1 heure</MenuItem>
+              <MenuItem value="2 heures">2 heures</MenuItem>
+              <MenuItem value="4 heures">4 heures</MenuItem>
+            </Select>
+          </Box>
+        )}
+
+        {/* Shared Channels Configuration */}
+        <Box
+          sx={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '2px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '20px',
+            padding: 3.5,
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: '16px',
+              fontWeight: 700,
+              mb: 3,
+              color: '#FFF',
+              fontFamily: 'var(--font-primary)',
+            }}
+          >
+            📢 Canaux de notification
+          </Typography>
+
+          {/* Channel Tabs */}
+          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mb: 3 }}>
+            {['email', 'whatsapp', 'telegram'].map((channel) => (
+              <Box
+                key={channel}
+                onClick={() => {
+                  setNotificationChannels({ ...notificationChannels, activeChannel: channel });
+                }}
+                sx={{
+                  position: 'relative',
+                  overflow: 'hidden',
+                  padding: '12px 24px',
+                  background:
+                    notificationChannels.activeChannel === channel
+                      ? `linear-gradient(135deg, ${agentColor.primary}, ${agentColor.primary}dd)`
+                      : 'rgba(0, 0, 0, 0.3)',
+                  border: `2px solid ${notificationChannels.activeChannel === channel ? agentColor.primary : 'rgba(255, 255, 255, 0.1)'}`,
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  fontWeight: 600,
+                  fontSize: '15px',
+                  color: '#FFF',
+                  fontFamily: 'var(--font-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  '&:hover': {
+                    borderColor: `${agentColor.primary}66`,
+                    transform: 'scale(1.05)',
+                    '& .shine-effect': {
+                      transform: 'translateX(100%)',
+                    },
+                  },
+                }}
+              >
+                {/* Shine effect */}
+                <Box
+                  className="shine-effect"
+                  sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                    transform: 'translateX(-100%)',
+                    transition: 'transform 0.7s ease-out',
+                    pointerEvents: 'none',
+                  }}
+                />
+                <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  {channel === 'email' && '📧 Email'}
+                  {channel === 'whatsapp' && '💬 WhatsApp'}
+                  {channel === 'telegram' && '✈️ Telegram'}
+                </Box>
+              </Box>
+            ))}
+          </Box>
+
+          {/* Channel Content */}
+          {notificationChannels.activeChannel === 'email' && (
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  mb: 1.5,
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontFamily: 'var(--font-primary)',
+                }}
+              >
+                Adresse email
+              </Typography>
+              <TextField
+                fullWidth
+                type="email"
+                value={notificationChannels.email}
+                onChange={(e) => {
+                  setNotificationChannels({ ...notificationChannels, email: e.target.value });
+                }}
+                placeholder="support@example.com"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    backdropFilter: 'blur(10px)',
+                    color: '#FFF',
+                    borderRadius: '12px',
+                    fontFamily: 'var(--font-primary)',
+                    '& fieldset': {
+                      borderColor: 'rgba(255, 255, 255, 0.1)',
+                      borderWidth: '2px',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: `${agentColor.primary}66`,
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: agentColor.primary,
+                    },
+                  },
+                }}
+              />
+            </Box>
+          )}
+
+          {notificationChannels.activeChannel === 'whatsapp' && (
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  mb: 1.5,
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontFamily: 'var(--font-primary)',
+                }}
+              >
+                Numéro WhatsApp
+              </Typography>
+              <TextField
+                fullWidth
+                type="tel"
+                value={notificationChannels.whatsapp}
+                onChange={(e) => {
+                  setNotificationChannels({ ...notificationChannels, whatsapp: e.target.value });
+                }}
+                placeholder="+212 6 XX XX XX XX"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    backdropFilter: 'blur(10px)',
+                    color: '#FFF',
+                    borderRadius: '12px',
+                    fontFamily: 'var(--font-primary)',
+                    '& fieldset': {
+                      borderColor: 'rgba(255, 255, 255, 0.1)',
+                      borderWidth: '2px',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: `${agentColor.primary}66`,
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: agentColor.primary,
+                    },
+                  },
+                }}
+              />
+            </Box>
+          )}
+
+          {notificationChannels.activeChannel === 'telegram' && (
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  mb: 1.5,
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontFamily: 'var(--font-primary)',
+                }}
+              >
+                Chat ID Telegram
+              </Typography>
+              <TextField
+                fullWidth
+                type="text"
+                value={notificationChannels.telegram}
+                onChange={(e) => {
+                  setNotificationChannels({ ...notificationChannels, telegram: e.target.value });
+                }}
+                placeholder="123456789"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    backdropFilter: 'blur(10px)',
+                    color: '#FFF',
+                    borderRadius: '12px',
+                    fontFamily: 'var(--font-primary)',
+                    '& fieldset': {
+                      borderColor: 'rgba(255, 255, 255, 0.1)',
+                      borderWidth: '2px',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: `${agentColor.primary}66`,
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: agentColor.primary,
+                    },
+                  },
+                }}
+              />
+            </Box>
+          )}
+        </Box>
+      </Box>
+    );
+  };
+
+  // Step 6: Configuration (Placeholder)
+  const renderStep6Config = () => (
     <Box sx={{ maxWidth: '800px', margin: '0 auto' }}>
       <Box
         sx={{
@@ -1660,7 +2312,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
   );
 
   // Step 6: Integrations
-  const renderStep6 = () => (
+  const renderStep8 = () => (
     <Box>
       <Typography
         sx={{
@@ -1950,7 +2602,7 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
   );
 
   // Step 7: Finalization
-  const renderStep7 = () => (
+  const renderStep9 = () => (
     <Box>
       <Box
         sx={{
