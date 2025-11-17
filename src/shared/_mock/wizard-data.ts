@@ -45,21 +45,21 @@ export const wizardSteps: WizardStep[] = [
   },
   {
     id: 7,
-    label: 'Configuration',
-    title: '⚙️ Configuration opérationnelle',
-    subtitle: 'Paramètres avancés de fonctionnement',
-  },
-  {
-    id: 8,
     label: 'Intégrations',
     title: '🔗 Sélectionnez vos intégrations',
     subtitle: 'Connectez les outils que votre agent utilisera',
   },
   {
-    id: 9,
-    label: 'Finalisation',
-    title: '🔧 Configuration des intégrations',
+    id: 8,
+    label: 'Configurations',
+    title: '🔧 Configurations d\'intégration',
     subtitle: 'Configurez les intégrations que vous avez sélectionnées',
+  },
+  {
+    id: 9,
+    label: 'Résumé',
+    title: '✨ Résumé de configuration',
+    subtitle: 'Vérifiez votre configuration avant de créer l\'agent',
   },
 ];
 

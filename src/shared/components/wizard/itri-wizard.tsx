@@ -108,7 +108,36 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
     telegram: '',
   });
 
+  // Integration configuration state
+  const [activeIntegrationTab, setActiveIntegrationTab] = useState<string>('');
+  const [integrationConfigs, setIntegrationConfigs] = useState<Record<string, any>>({});
+
   const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+
+  // Get all selected integrations
+  const selectedIntegrations = React.useMemo(() => {
+    return [
+      ...wizardData.communicationChannels.map(id => {
+        const integration = communicationIntegrations.find(i => i.id === id);
+        return integration ? { ...integration, category: 'communication' as const } : null;
+      }),
+      ...wizardData.ticketingSystems.map(id => {
+        const integration = ticketingIntegrations.find(i => i.id === id);
+        return integration ? { ...integration, category: 'ticketing' as const } : null;
+      }),
+      ...wizardData.ecommerceTools.map(id => {
+        const integration = ecommerceIntegrations.find(i => i.id === id);
+        return integration ? { ...integration, category: 'ecommerce' as const } : null;
+      })
+    ].filter((item): item is NonNullable<typeof item> => item !== null);
+  }, [wizardData.communicationChannels, wizardData.ticketingSystems, wizardData.ecommerceTools]);
+
+  // Set the first integration as active when integrations change
+  useEffect(() => {
+    if (selectedIntegrations.length > 0 && !activeIntegrationTab) {
+      setActiveIntegrationTab(selectedIntegrations[0].id);
+    }
+  }, [selectedIntegrations, activeIntegrationTab]);
 
   // Animate entrance
   useEffect(() => {
@@ -315,11 +344,11 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
       case 6:
         return renderStep5Notifications();
       case 7:
-        return renderStep6Config();
+        return renderStep7Integration();
       case 8:
-        return renderStep8();
+        return renderStep8IntegrationConfig();
       case 9:
-        return renderStep9();
+        return renderStep9Resume();
       default:
         return null;
     }
@@ -392,10 +421,10 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
             { icon: '🎯', text: 'Objectifs' },
             { icon: '⚙️', text: 'Fonctionnalités' },
             { icon: '💬', text: 'Identité' },
-            { icon: '📚', text: 'Base FAQ' },
-            { icon: '🌐', text: 'Langues' },
+            { icon: '🔔', text: 'Notifications' },
             { icon: '🔗', text: 'Intégrations' },
-            { icon: '✨', text: 'Finalisation' },
+            { icon: '🔧', text: 'Configuration' },
+            { icon: '📋', text: 'Résumé' },
           ].map((step, index) => (
             <Box
               key={index}
@@ -2271,412 +2300,866 @@ export const ItriWizard: React.FC<ItriWizardProps> = ({ onBack, onComplete }) =>
     );
   };
 
-  // Step 6: Configuration (Placeholder)
-  const renderStep6Config = () => (
-    <Box sx={{ maxWidth: '800px', margin: '0 auto' }}>
-      <Box
-        sx={{
-          background: `linear-gradient(135deg, ${agentColor.primary}08, ${agentColor.primary}03)`,
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: `1px solid ${agentColor.primary}33`,
-          borderRadius: '16px',
-          padding: 4,
-          textAlign: 'center',
-        }}
-      >
-        <Box sx={{ fontSize: '64px', mb: 2 }}>🔔</Box>
-        <Typography
-          sx={{
-            fontSize: '24px',
-            fontWeight: 700,
-            mb: 2,
-            color: '#FFF',
-            fontFamily: 'var(--font-tertiary)',
-          }}
-        >
-          Configuration opérationnelle
-        </Typography>
-        <Typography
-          sx={{
-            fontSize: '16px',
-            color: 'rgba(255, 255, 255, 0.7)',
-            lineHeight: 1.8,
-            fontFamily: 'var(--font-primary)',
-          }}
-        >
-          Cette section permettra de configurer les notifications et les paramètres avancés de votre agent.
-        </Typography>
-      </Box>
-    </Box>
-  );
+  // Step 7: Integration Selection
+  const renderStep7Integration = () => {
+    // Combine all integrations with their categories
+    const allIntegrations = [
+      ...communicationIntegrations.map(i => ({ ...i, category: 'communication' as const })),
+      ...ticketingIntegrations.map(i => ({ ...i, category: 'ticketing' as const })),
+      ...ecommerceIntegrations.map(i => ({ ...i, category: 'ecommerce' as const }))
+    ];
 
-  // Step 6: Integrations
-  const renderStep8 = () => (
-    <Box>
-      <Typography
-        sx={{
-          fontSize: '15px',
-          fontWeight: 700,
-          mb: 3,
-          color: 'rgba(255, 255, 255, 0.75)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-        }}
-      >
-        📱 Canaux de communication
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 5 }}>
-        {communicationIntegrations.map((integration) => {
-          const isSelected = wizardData.communicationChannels.includes(integration.id);
-          return (
-            <Box
-              key={integration.id}
-              onClick={() => handleIntegrationToggle('communication', integration.id)}
-              sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 2.5,
-                padding: 3,
-                background: isSelected
-                  ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
-                  : 'rgba(255, 255, 255, 0.02)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                borderRadius: '20px',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                border: isSelected
-                  ? `2px solid ${agentColor.primary}`
-                  : '2px solid rgba(255, 255, 255, 0.06)',
-                boxShadow: isSelected
-                  ? `0 8px 32px ${agentColor.glow}`
-                  : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                '&:hover': {
-                  background: isSelected
-                    ? `linear-gradient(135deg, ${agentColor.primary}15, ${agentColor.primary}08)`
-                    : 'rgba(255, 255, 255, 0.04)',
-                  borderColor: `${agentColor.primary}66`,
-                  transform: 'translateX(4px)',
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '8px',
-                  border: `2px solid ${isSelected ? agentColor.primary : 'rgba(255, 255, 255, 0.2)'}`,
-                  background: isSelected ? agentColor.primary : 'transparent',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  mt: 0.5,
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                {isSelected && (
-                  <FontAwesomeIcon icon="check" style={{ fontSize: '14px', color: '#FFF' }} />
-                )}
-              </Box>
-              <Box sx={{ fontSize: '32px', flexShrink: 0 }}>{integration.icon}</Box>
-              <Box sx={{ flex: 1 }}>
-                <Typography
-                  sx={{
-                    fontSize: '17px',
-                    fontWeight: 700,
-                    mb: 0.5,
-                    color: '#FFF',
-                    fontFamily: 'var(--font-primary)',
-                  }}
-                >
-                  {integration.title}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.65)',
-                    lineHeight: 1.6,
-                    fontFamily: 'var(--font-primary)',
-                  }}
-                >
-                  {integration.description}
-                </Typography>
-              </Box>
-            </Box>
-          );
-        })}
-      </Box>
-
-      <Typography
-        sx={{
-          fontSize: '15px',
-          fontWeight: 700,
-          mb: 3,
-          color: 'rgba(255, 255, 255, 0.75)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-        }}
-      >
-        🎫 Systèmes de ticketing
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 5 }}>
-        {ticketingIntegrations.map((integration) => {
-          const isSelected = wizardData.ticketingSystems.includes(integration.id);
-          return (
-            <Box
-              key={integration.id}
-              onClick={() => handleIntegrationToggle('ticketing', integration.id)}
-              sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 2.5,
-                padding: 3,
-                background: isSelected
-                  ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
-                  : 'rgba(255, 255, 255, 0.02)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                borderRadius: '20px',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                border: isSelected
-                  ? `2px solid ${agentColor.primary}`
-                  : '2px solid rgba(255, 255, 255, 0.06)',
-                boxShadow: isSelected
-                  ? `0 8px 32px ${agentColor.glow}`
-                  : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                '&:hover': {
-                  background: isSelected
-                    ? `linear-gradient(135deg, ${agentColor.primary}15, ${agentColor.primary}08)`
-                    : 'rgba(255, 255, 255, 0.04)',
-                  borderColor: `${agentColor.primary}66`,
-                  transform: 'translateX(4px)',
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '8px',
-                  border: `2px solid ${isSelected ? agentColor.primary : 'rgba(255, 255, 255, 0.2)'}`,
-                  background: isSelected ? agentColor.primary : 'transparent',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  mt: 0.5,
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                {isSelected && (
-                  <FontAwesomeIcon icon="check" style={{ fontSize: '14px', color: '#FFF' }} />
-                )}
-              </Box>
-              <Box sx={{ fontSize: '32px', flexShrink: 0 }}>{integration.icon}</Box>
-              <Box sx={{ flex: 1 }}>
-                <Typography
-                  sx={{
-                    fontSize: '17px',
-                    fontWeight: 700,
-                    mb: 0.5,
-                    color: '#FFF',
-                    fontFamily: 'var(--font-primary)',
-                  }}
-                >
-                  {integration.title}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.65)',
-                    lineHeight: 1.6,
-                    fontFamily: 'var(--font-primary)',
-                  }}
-                >
-                  {integration.description}
-                </Typography>
-              </Box>
-            </Box>
-          );
-        })}
-      </Box>
-
-      <Typography
-        sx={{
-          fontSize: '15px',
-          fontWeight: 700,
-          mb: 3,
-          color: 'rgba(255, 255, 255, 0.75)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-        }}
-      >
-        🛒 E-commerce & CRM
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {ecommerceIntegrations.map((integration) => {
-          const isSelected = wizardData.ecommerceTools.includes(integration.id);
-          return (
-            <Box
-              key={integration.id}
-              onClick={() => handleIntegrationToggle('ecommerce', integration.id)}
-              sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 2.5,
-                padding: 3,
-                background: isSelected
-                  ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
-                  : 'rgba(255, 255, 255, 0.02)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                borderRadius: '20px',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                border: isSelected
-                  ? `2px solid ${agentColor.primary}`
-                  : '2px solid rgba(255, 255, 255, 0.06)',
-                boxShadow: isSelected
-                  ? `0 8px 32px ${agentColor.glow}`
-                  : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                '&:hover': {
-                  background: isSelected
-                    ? `linear-gradient(135deg, ${agentColor.primary}15, ${agentColor.primary}08)`
-                    : 'rgba(255, 255, 255, 0.04)',
-                  borderColor: `${agentColor.primary}66`,
-                  transform: 'translateX(4px)',
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '8px',
-                  border: `2px solid ${isSelected ? agentColor.primary : 'rgba(255, 255, 255, 0.2)'}`,
-                  background: isSelected ? agentColor.primary : 'transparent',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  mt: 0.5,
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                {isSelected && (
-                  <FontAwesomeIcon icon="check" style={{ fontSize: '14px', color: '#FFF' }} />
-                )}
-              </Box>
-              <Box sx={{ fontSize: '32px', flexShrink: 0 }}>{integration.icon}</Box>
-              <Box sx={{ flex: 1 }}>
-                <Typography
-                  sx={{
-                    fontSize: '17px',
-                    fontWeight: 700,
-                    mb: 0.5,
-                    color: '#FFF',
-                    fontFamily: 'var(--font-primary)',
-                  }}
-                >
-                  {integration.title}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.65)',
-                    lineHeight: 1.6,
-                    fontFamily: 'var(--font-primary)',
-                  }}
-                >
-                  {integration.description}
-                </Typography>
-              </Box>
-            </Box>
-          );
-        })}
-      </Box>
-    </Box>
-  );
-
-  // Step 7: Finalization
-  const renderStep9 = () => (
-    <Box>
-      <Box
-        sx={{
-          background: `linear-gradient(135deg, ${agentColor.primary}08, ${agentColor.primary}03)`,
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: `1px solid ${agentColor.primary}33`,
-          borderRadius: '16px',
-          padding: 2.5,
-          mb: 4,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-        }}
-      >
-        <Box sx={{ fontSize: '28px' }}>ℹ️</Box>
-        <Typography sx={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.6 }}>
-          Vous pourrez configurer vos intégrations après la création de l'agent. Pour l'instant, nous
-          allons finaliser la configuration de base.
-        </Typography>
-      </Box>
-
-      <Box
-        sx={{
-          background: 'rgba(255, 255, 255, 0.02)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '2px solid rgba(255, 255, 255, 0.06)',
-          borderRadius: '24px',
-          padding: 8,
-          textAlign: 'center',
-        }}
-      >
+    return (
+      <Box sx={{ maxWidth: '900px', margin: '0 auto' }}>
         <Box
           sx={{
-            fontSize: '80px',
-            mb: 3,
-            filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))',
+            background: `linear-gradient(135deg, ${agentColor.primary}08, ${agentColor.primary}03)`,
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: `1px solid ${agentColor.primary}33`,
+            borderRadius: '16px',
+            padding: 2.5,
+            mb: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
           }}
         >
-          🎉
+          <Box sx={{ fontSize: '24px' }}>🔗</Box>
+          <Typography sx={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.6 }}>
+            Sélectionnez les intégrations que votre agent utilisera
+          </Typography>
         </Box>
-        <Typography
+
+        <Box
           sx={{
-            fontSize: '32px',
-            fontWeight: 700,
-            mb: 2,
-            color: '#FFF',
-            fontFamily: 'var(--font-tertiary)',
-            textShadow: '0 4px 12px rgba(0,0,0,0.5)',
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+            gap: 2.5,
           }}
         >
-          Félicitations !
-        </Typography>
-        <Typography
-          sx={{
-            fontSize: '17px',
-            color: 'rgba(255, 255, 255, 0.75)',
-            lineHeight: 1.8,
-            maxWidth: '600px',
-            margin: '0 auto',
-            fontFamily: 'var(--font-primary)',
-          }}
-        >
-          Votre agent ITRI est prêt à être créé. Cliquez sur le bouton ci-dessous pour finaliser la
-          configuration.
-          <br />
-          <br />
-          Vous pourrez ensuite configurer les intégrations et personnaliser davantage votre agent
-          depuis le tableau de bord.
-        </Typography>
+          {allIntegrations.map((integration) => {
+            const isSelected =
+              integration.category === 'communication' ? wizardData.communicationChannels.includes(integration.id) :
+              integration.category === 'ticketing' ? wizardData.ticketingSystems.includes(integration.id) :
+              wizardData.ecommerceTools.includes(integration.id);
+
+            return (
+              <Box
+                key={integration.id}
+                onClick={() => handleIntegrationToggle(integration.category, integration.id)}
+                sx={{
+                  position: 'relative',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  padding: '16px 20px',
+                  background: isSelected
+                    ? `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`
+                    : 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  borderRadius: '16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  border: isSelected
+                    ? `2px solid ${agentColor.primary}`
+                    : '2px solid rgba(255, 255, 255, 0.08)',
+                  boxShadow: isSelected ? `0 4px 16px ${agentColor.glow}` : 'none',
+                  isolation: 'isolate',
+                  willChange: 'transform',
+                  '&:hover': {
+                    background: isSelected
+                      ? `linear-gradient(135deg, ${agentColor.primary}18, ${agentColor.primary}08)`
+                      : 'rgba(255, 255, 255, 0.06)',
+                    borderColor: `${agentColor.primary}66`,
+                    transform: 'translateY(-2px)',
+                    boxShadow: `0 6px 20px ${agentColor.glow}`,
+                    '& .shine-effect': {
+                      transform: 'translateX(100%)',
+                    },
+                  },
+                }}
+              >
+                {/* Shine effect */}
+                <Box
+                  className="shine-effect"
+                  sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
+                    transform: 'translateX(-100%)',
+                    transition: 'transform 0.7s ease-out',
+                    pointerEvents: 'none',
+                  }}
+                />
+
+                <Box
+                  sx={{
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '6px',
+                    border: `2px solid ${isSelected ? agentColor.primary : 'rgba(255, 255, 255, 0.3)'}`,
+                    background: isSelected ? agentColor.primary : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                    zIndex: 1,
+                  }}
+                >
+                  {isSelected && (
+                    <FontAwesomeIcon icon="check" style={{ fontSize: '11px', color: '#FFF' }} />
+                  )}
+                </Box>
+                <Box sx={{ fontSize: '28px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
+                  {integration.icon}
+                </Box>
+                <Box sx={{ flex: 1, position: 'relative', zIndex: 1 }}>
+                  <Typography
+                    sx={{
+                      fontSize: '15px',
+                      fontWeight: 700,
+                      mb: 0.5,
+                      color: '#FFF',
+                      fontFamily: 'var(--font-primary)',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {integration.title}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: '13px',
+                      color: 'rgba(255, 255, 255, 0.65)',
+                      lineHeight: 1.4,
+                      fontFamily: 'var(--font-primary)',
+                    }}
+                  >
+                    {integration.description}
+                  </Typography>
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
       </Box>
-    </Box>
-  );
+    );
+  };
+
+  // Step 7: Finalization
+  // Step 8: Integration Configuration with Tabs
+  const renderStep8IntegrationConfig = () => {
+    if (selectedIntegrations.length === 0) {
+      return (
+        <Box sx={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+          <Box
+            sx={{
+              background: `linear-gradient(135deg, ${agentColor.primary}08, ${agentColor.primary}03)`,
+              backdropFilter: 'blur(20px)',
+              border: `1px solid ${agentColor.primary}33`,
+              borderRadius: '16px',
+              padding: 4,
+            }}
+          >
+            <Box sx={{ fontSize: '64px', mb: 2 }}>ℹ️</Box>
+            <Typography sx={{ fontSize: '18px', color: 'rgba(255, 255, 255, 0.8)' }}>
+              Aucune intégration sélectionnée. Vous pouvez passer à l'étape suivante.
+            </Typography>
+          </Box>
+        </Box>
+      );
+    }
+
+    const activeTab = selectedIntegrations.find(i => i.id === activeIntegrationTab) || selectedIntegrations[0];
+
+    return (
+      <Box sx={{ maxWidth: '900px', margin: '0 auto' }}>
+        {/* Tabs */}
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 1,
+            mb: 3,
+            pb: 1,
+            borderBottom: `2px solid ${agentColor.primary}22`,
+            overflowX: 'auto',
+            '&::-webkit-scrollbar': { height: '6px' },
+            '&::-webkit-scrollbar-thumb': {
+              background: agentColor.primary,
+              borderRadius: '3px'
+            },
+          }}
+        >
+          {selectedIntegrations.map((integration) => (
+            <Box
+              key={integration.id}
+              onClick={() => setActiveIntegrationTab(integration.id)}
+              sx={{
+                padding: '12px 24px',
+                background: activeIntegrationTab === integration.id
+                  ? `linear-gradient(135deg, ${agentColor.primary}, ${agentColor.primary}cc)`
+                  : 'rgba(255, 255, 255, 0.03)',
+                border: `2px solid ${activeIntegrationTab === integration.id ? agentColor.primary : 'rgba(255, 255, 255, 0.08)'}`,
+                borderRadius: '12px 12px 0 0',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5,
+                whiteSpace: 'nowrap',
+                '&:hover': {
+                  borderColor: `${agentColor.primary}66`,
+                  background: activeIntegrationTab === integration.id
+                    ? `linear-gradient(135deg, ${agentColor.primary}, ${agentColor.primary}cc)`
+                    : 'rgba(255, 255, 255, 0.06)',
+                },
+              }}
+            >
+              <Box sx={{ fontSize: '20px' }}>{integration.icon}</Box>
+              <Typography sx={{ fontSize: '15px', fontWeight: 600, color: '#FFF' }}>
+                {integration.title}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+
+        {/* Tab Content */}
+        {renderIntegrationConfigContent(activeTab)}
+      </Box>
+    );
+  };
+
+  // Helper function to render integration configuration content
+  const renderIntegrationConfigContent = (integration: any) => {
+    const configData = integrationConfigs[integration.id] || {};
+
+    const updateConfig = (field: string, value: string) => {
+      setIntegrationConfigs(prev => ({
+        ...prev,
+        [integration.id]: {
+          ...prev[integration.id],
+          [field]: value
+        }
+      }));
+    };
+
+    // Configuration guides for different integrations
+    const renderGuideAndForm = () => {
+      switch (integration.id) {
+        case 'whatsapp':
+          return (
+            <>
+              {/* Guide Card */}
+              <Box
+                sx={{
+                  background: `linear-gradient(135deg, ${agentColor.primary}15, ${agentColor.primary}08)`,
+                  border: `2px solid ${agentColor.primary}`,
+                  borderRadius: '16px',
+                  padding: 3.5,
+                  mb: 3,
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                  <Box sx={{ fontSize: '28px' }}>💬</Box>
+                  <Typography sx={{ fontSize: '20px', fontWeight: 700, color: '#FFF' }}>
+                    Guide de configuration WhatsApp Business
+                  </Typography>
+                </Box>
+                <Typography sx={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.85)', mb: 2.5, lineHeight: 1.6 }}>
+                  Pour connecter WhatsApp Business à IAVIA, vous devez créer une application Meta et obtenir vos identifiants API.
+                </Typography>
+
+                {/* Steps */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {[
+                    'Créez une application sur Meta for Developers',
+                    'Activez WhatsApp Business API dans votre application',
+                    'Récupérez votre Phone Number ID, WhatsApp Business Account ID et Access Token',
+                    'Configurez le webhook avec l\'URL fournie par IAVIA'
+                  ].map((step, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 1.5,
+                        padding: 2,
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: '32px',
+                          height: '32px',
+                          background: agentColor.primary,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: 700,
+                          fontSize: '14px',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {index + 1}
+                      </Box>
+                      <Typography sx={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.85)', pt: 0.5, lineHeight: 1.5 }}>
+                        {step}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+
+              {/* Form */}
+              <Box
+                sx={{
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '2px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: 3.5,
+                }}
+              >
+                <Box sx={{ mb: 2.5 }}>
+                  <Typography sx={{ fontSize: '15px', fontWeight: 700, mb: 1, color: '#FFF' }}>
+                    Phone Number ID <span style={{ color: '#ef4444' }}>*</span>
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    placeholder="123456789012345"
+                    value={configData.phoneNumberId || ''}
+                    onChange={(e) => updateConfig('phoneNumberId', e.target.value)}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        borderRadius: '12px',
+                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                        '&:hover fieldset': { borderColor: `${agentColor.primary}66` },
+                        '&.Mui-focused fieldset': { borderColor: agentColor.primary },
+                      },
+                      '& .MuiOutlinedInput-input': { color: '#FFF' },
+                    }}
+                  />
+                  <Typography sx={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.65)', mt: 0.75 }}>
+                    ID du numéro de téléphone WhatsApp Business
+                  </Typography>
+                </Box>
+
+                <Box sx={{ mb: 2.5 }}>
+                  <Typography sx={{ fontSize: '15px', fontWeight: 700, mb: 1, color: '#FFF' }}>
+                    WhatsApp Business Account ID <span style={{ color: '#ef4444' }}>*</span>
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    placeholder="987654321098765"
+                    value={configData.accountId || ''}
+                    onChange={(e) => updateConfig('accountId', e.target.value)}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        borderRadius: '12px',
+                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                        '&:hover fieldset': { borderColor: `${agentColor.primary}66` },
+                        '&.Mui-focused fieldset': { borderColor: agentColor.primary },
+                      },
+                      '& .MuiOutlinedInput-input': { color: '#FFF' },
+                    }}
+                  />
+                  <Typography sx={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.65)', mt: 0.75 }}>
+                    ID de votre compte WhatsApp Business
+                  </Typography>
+                </Box>
+
+                <Box sx={{ mb: 2.5 }}>
+                  <Typography sx={{ fontSize: '15px', fontWeight: 700, mb: 1, color: '#FFF' }}>
+                    Access Token <span style={{ color: '#ef4444' }}>*</span>
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    placeholder="EAAxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    value={configData.accessToken || ''}
+                    onChange={(e) => updateConfig('accessToken', e.target.value)}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        borderRadius: '12px',
+                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                        '&:hover fieldset': { borderColor: `${agentColor.primary}66` },
+                        '&.Mui-focused fieldset': { borderColor: agentColor.primary },
+                      },
+                      '& .MuiOutlinedInput-input': { color: '#FFF' },
+                    }}
+                  />
+                  <Typography sx={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.65)', mt: 0.75 }}>
+                    Token d'accès permanent généré depuis Meta for Developers
+                  </Typography>
+                </Box>
+
+                <Box>
+                  <Typography sx={{ fontSize: '15px', fontWeight: 700, mb: 1, color: '#FFF' }}>
+                    Webhook Verify Token <span style={{ color: '#ef4444' }}>*</span>
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    placeholder="mon_token_secret_123"
+                    value={configData.verifyToken || ''}
+                    onChange={(e) => updateConfig('verifyToken', e.target.value)}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        borderRadius: '12px',
+                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                        '&:hover fieldset': { borderColor: `${agentColor.primary}66` },
+                        '&.Mui-focused fieldset': { borderColor: agentColor.primary },
+                      },
+                      '& .MuiOutlinedInput-input': { color: '#FFF' },
+                    }}
+                  />
+                  <Typography sx={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.65)', mt: 0.75 }}>
+                    Token de vérification pour sécuriser votre webhook
+                  </Typography>
+                </Box>
+              </Box>
+            </>
+          );
+
+        case 'freshdesk':
+          return (
+            <>
+              {/* Guide Card */}
+              <Box
+                sx={{
+                  background: `linear-gradient(135deg, ${agentColor.primary}15, ${agentColor.primary}08)`,
+                  border: `2px solid ${agentColor.primary}`,
+                  borderRadius: '16px',
+                  padding: 3.5,
+                  mb: 3,
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                  <Box sx={{ fontSize: '28px' }}>📋</Box>
+                  <Typography sx={{ fontSize: '20px', fontWeight: 700, color: '#FFF' }}>
+                    Guide de configuration Freshdesk
+                  </Typography>
+                </Box>
+                <Typography sx={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.85)', mb: 2.5, lineHeight: 1.6 }}>
+                  Pour connecter votre compte Freshdesk à IAVIA, vous aurez besoin de votre domaine Freshdesk et d'une clé API.
+                </Typography>
+
+                {/* Steps */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {[
+                    'Connectez-vous à votre compte Freshdesk',
+                    'Accédez à Profil → Paramètres de profil',
+                    'Dans la section Clé API, copiez votre clé ou générez-en une nouvelle',
+                    'Collez votre domaine et votre clé API dans les champs ci-dessous'
+                  ].map((step, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 1.5,
+                        padding: 2,
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: '32px',
+                          height: '32px',
+                          background: agentColor.primary,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: 700,
+                          fontSize: '14px',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {index + 1}
+                      </Box>
+                      <Typography sx={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.85)', pt: 0.5, lineHeight: 1.5 }}>
+                        {step}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+
+              {/* Form */}
+              <Box
+                sx={{
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '2px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: 3.5,
+                }}
+              >
+                <Box sx={{ mb: 2.5 }}>
+                  <Typography sx={{ fontSize: '15px', fontWeight: 700, mb: 1, color: '#FFF' }}>
+                    Domaine Freshdesk <span style={{ color: '#ef4444' }}>*</span>
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    placeholder="votreentreprise.freshdesk.com"
+                    value={configData.domain || ''}
+                    onChange={(e) => updateConfig('domain', e.target.value)}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        borderRadius: '12px',
+                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                        '&:hover fieldset': { borderColor: `${agentColor.primary}66` },
+                        '&.Mui-focused fieldset': { borderColor: agentColor.primary },
+                      },
+                      '& .MuiOutlinedInput-input': { color: '#FFF' },
+                    }}
+                  />
+                  <Typography sx={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.65)', mt: 0.75 }}>
+                    Votre domaine Freshdesk (sans https://)
+                  </Typography>
+                </Box>
+
+                <Box sx={{ mb: 2.5 }}>
+                  <Typography sx={{ fontSize: '15px', fontWeight: 700, mb: 1, color: '#FFF' }}>
+                    Clé API Freshdesk <span style={{ color: '#ef4444' }}>*</span>
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    placeholder="xxxxxxxxxxxxxxxxxxxx"
+                    value={configData.apiKey || ''}
+                    onChange={(e) => updateConfig('apiKey', e.target.value)}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        borderRadius: '12px',
+                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                        '&:hover fieldset': { borderColor: `${agentColor.primary}66` },
+                        '&.Mui-focused fieldset': { borderColor: agentColor.primary },
+                      },
+                      '& .MuiOutlinedInput-input': { color: '#FFF' },
+                    }}
+                  />
+                  <Typography sx={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.65)', mt: 0.75 }}>
+                    Trouvez votre clé API dans Profil {'>'} Paramètres de votre compte Freshdesk
+                  </Typography>
+                </Box>
+
+                <Box>
+                  <Typography sx={{ fontSize: '15px', fontWeight: 700, mb: 1, color: '#FFF' }}>
+                    Groupe par défaut (optionnel)
+                  </Typography>
+                  <Select
+                    fullWidth
+                    value={configData.defaultGroup || 'none'}
+                    onChange={(e) => updateConfig('defaultGroup', e.target.value)}
+                    sx={{
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      borderRadius: '12px',
+                      color: '#FFF',
+                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255, 255, 255, 0.1)' },
+                      '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: `${agentColor.primary}66` },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: agentColor.primary },
+                    }}
+                  >
+                    <MenuItem value="none">Aucun groupe spécifique</MenuItem>
+                    <MenuItem value="support">Support Technique</MenuItem>
+                    <MenuItem value="customer-service">Service Client</MenuItem>
+                    <MenuItem value="billing">Facturation</MenuItem>
+                  </Select>
+                  <Typography sx={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.65)', mt: 0.75 }}>
+                    Les tickets créés par l'agent seront assignés à ce groupe
+                  </Typography>
+                </Box>
+              </Box>
+            </>
+          );
+
+        default:
+          return (
+            <Box
+              sx={{
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '2px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                padding: 4,
+                textAlign: 'center',
+              }}
+            >
+              <Box sx={{ fontSize: '48px', mb: 2 }}>{integration.icon}</Box>
+              <Typography sx={{ fontSize: '18px', fontWeight: 700, mb: 1, color: '#FFF' }}>
+                Configuration de {integration.title}
+              </Typography>
+              <Typography sx={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                Les instructions de configuration pour cette intégration seront ajoutées prochainement.
+              </Typography>
+            </Box>
+          );
+      }
+    };
+
+    return renderGuideAndForm();
+  };
+
+  // Step 9: Resume/Summary
+  const renderStep9Resume = () => {
+    const getSelectedItems = (ids: string[], items: any[]) => {
+      return ids.map(id => items.find(item => item.id === id)).filter(Boolean);
+    };
+
+    const selectedObjectives = getSelectedItems(wizardData.objectives, objectives);
+    const selectedFeatures = getSelectedItems(wizardData.features, features);
+    const selectedLanguages = getSelectedItems(wizardData.languages, languages);
+    const selectedCommunication = getSelectedItems(wizardData.communicationChannels, communicationIntegrations);
+    const selectedTicketing = getSelectedItems(wizardData.ticketingSystems, ticketingIntegrations);
+    const selectedEcommerce = getSelectedItems(wizardData.ecommerceTools, ecommerceIntegrations);
+
+    const allIntegrations = [...selectedCommunication, ...selectedTicketing, ...selectedEcommerce];
+
+    return (
+      <Box sx={{ maxWidth: '900px', margin: '0 auto' }}>
+        <Box
+          sx={{
+            background: `linear-gradient(135deg, ${agentColor.primary}08, ${agentColor.primary}03)`,
+            backdropFilter: 'blur(20px)',
+            border: `1px solid ${agentColor.primary}33`,
+            borderRadius: '16px',
+            padding: 2.5,
+            mb: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+          }}
+        >
+          <Box sx={{ fontSize: '24px' }}>📋</Box>
+          <Typography sx={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.6 }}>
+            Vérifiez votre configuration avant de créer votre agent ITRI
+          </Typography>
+        </Box>
+
+        {/* Resume Sections */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {/* Context */}
+          {wizardData.businessModel && (
+            <Box
+              sx={{
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '2px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                padding: 3,
+              }}
+            >
+              <Typography sx={{ fontSize: '18px', fontWeight: 700, mb: 2, color: agentColor.primary }}>
+                👥 Contexte
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Typography sx={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                  <strong>Modèle:</strong> {businessModels.find(b => b.id === wizardData.businessModel)?.title}
+                </Typography>
+                {wizardData.teamSize && (
+                  <Typography sx={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Équipe:</strong> {teamSizes.find(t => t.id === wizardData.teamSize)?.title}
+                  </Typography>
+                )}
+                {wizardData.requestVolume && (
+                  <Typography sx={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Volume:</strong> {requestVolumes.find(r => r.id === wizardData.requestVolume)?.title} demandes/jour
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          )}
+
+          {/* Objectives */}
+          {selectedObjectives.length > 0 && (
+            <Box
+              sx={{
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '2px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                padding: 3,
+              }}
+            >
+              <Typography sx={{ fontSize: '18px', fontWeight: 700, mb: 2, color: agentColor.primary }}>
+                🎯 Objectifs prioritaires
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                {selectedObjectives.map(obj => (
+                  <Box
+                    key={obj.id}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      padding: '8px 16px',
+                      background: `${agentColor.primary}15`,
+                      border: `1px solid ${agentColor.primary}33`,
+                      borderRadius: '12px',
+                    }}
+                  >
+                    <Box sx={{ fontSize: '18px' }}>{obj.icon}</Box>
+                    <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#FFF' }}>{obj.title}</Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
+
+          {/* Features */}
+          {selectedFeatures.length > 0 && (
+            <Box
+              sx={{
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '2px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                padding: 3,
+              }}
+            >
+              <Typography sx={{ fontSize: '18px', fontWeight: 700, mb: 2, color: agentColor.primary }}>
+                ⚙️ Fonctionnalités activées
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                {selectedFeatures.map(feature => (
+                  <Box
+                    key={feature.id}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      padding: '8px 16px',
+                      background: `${agentColor.primary}15`,
+                      border: `1px solid ${agentColor.primary}33`,
+                      borderRadius: '12px',
+                    }}
+                  >
+                    <Box sx={{ fontSize: '18px' }}>{feature.icon}</Box>
+                    <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#FFF' }}>{feature.title}</Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
+
+          {/* Tone */}
+          {wizardData.tone && (
+            <Box
+              sx={{
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '2px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                padding: 3,
+              }}
+            >
+              <Typography sx={{ fontSize: '18px', fontWeight: 700, mb: 2, color: agentColor.primary }}>
+                💬 Identité
+              </Typography>
+              <Typography sx={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                <strong>Tonalité:</strong> {toneOptions.find(t => t.id === wizardData.tone)?.title}
+              </Typography>
+            </Box>
+          )}
+
+          {/* Languages */}
+          {selectedLanguages.length > 0 && (
+            <Box
+              sx={{
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '2px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                padding: 3,
+              }}
+            >
+              <Typography sx={{ fontSize: '18px', fontWeight: 700, mb: 2, color: agentColor.primary }}>
+                🌐 Langues supportées
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                {selectedLanguages.map(lang => (
+                  <Box
+                    key={lang.id}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      padding: '8px 16px',
+                      background: `${agentColor.primary}15`,
+                      border: `1px solid ${agentColor.primary}33`,
+                      borderRadius: '12px',
+                    }}
+                  >
+                    <Box sx={{ fontSize: '18px' }}>{lang.icon}</Box>
+                    <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#FFF' }}>{lang.title}</Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
+
+          {/* Integrations */}
+          {allIntegrations.length > 0 && (
+            <Box
+              sx={{
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '2px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                padding: 3,
+              }}
+            >
+              <Typography sx={{ fontSize: '18px', fontWeight: 700, mb: 2, color: agentColor.primary }}>
+                🔗 Intégrations configurées
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                {allIntegrations.map(integration => (
+                  <Box
+                    key={integration.id}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      padding: '8px 16px',
+                      background: `${agentColor.primary}15`,
+                      border: `1px solid ${agentColor.primary}33`,
+                      borderRadius: '12px',
+                    }}
+                  >
+                    <Box sx={{ fontSize: '18px' }}>{integration.icon}</Box>
+                    <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#FFF' }}>{integration.title}</Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
+        </Box>
+
+        {/* Final message */}
+        <Box
+          sx={{
+            background: `linear-gradient(135deg, ${agentColor.primary}12, ${agentColor.primary}06)`,
+            border: `2px solid ${agentColor.primary}`,
+            borderRadius: '20px',
+            padding: 4,
+            mt: 4,
+            textAlign: 'center',
+          }}
+        >
+          <Box sx={{ fontSize: '64px', mb: 2 }}>🎉</Box>
+          <Typography sx={{ fontSize: '24px', fontWeight: 700, mb: 1.5, color: '#FFF' }}>
+            Tout est prêt !
+          </Typography>
+          <Typography sx={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.85)', lineHeight: 1.7 }}>
+            Cliquez sur "Créer l'agent" pour finaliser la configuration et déployer votre agent ITRI.
+          </Typography>
+        </Box>
+      </Box>
+    );
+  };
 
   const currentStepData = wizardSteps[currentStep - 1];
 
