@@ -12,12 +12,15 @@ import { FontAwesomeIcon } from '@/shared/components/fontawesome';
 import { useSidebar } from '@/contexts/settings/sidebar-context';
 import { useInterfaceTitle } from '@/contexts/settings/interface-title-context';
 import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 
 
 export function Header() {
   const { title } = useInterfaceTitle();
   const { isCollapsed } = useSidebar();
   const [isScrolled, setIsScrolled] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => {
@@ -53,19 +56,71 @@ export function Header() {
         transitionTimingFunction: 'ease',
       }}
     >
-      <Typography
-        sx={{
-          color: '#FFF',
-          fontFamily: 'var(--font-tertiary)',
-          fontWeight: 700,
-          fontSize: '30px',
-          lineHeight: '12.66px',
-          letterSpacing: '-0.211px',
-          textTransform: 'capitalize',
-        }}
-      >
-        {title}
-      </Typography>
+{title.toLowerCase() === 'marketplace' ? (
+        <Box
+          onClick={() => {
+            // Dispatch custom event to reset marketplace
+            window.dispatchEvent(new Event('marketplace-reset'));
+            // Navigate to marketplace (in case user is on a different page)
+            if (pathname !== '/dashboard/marketplace') {
+              router.push('/dashboard/marketplace');
+            }
+          }}
+          sx={{
+            position: 'relative',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            '&:hover': {
+              '& .shine-effect': {
+                transform: 'translateX(100%)',
+              },
+            },
+          }}
+        >
+          {/* Shine effect */}
+          <Box
+            className="shine-effect"
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+              transform: 'translateX(-100%)',
+              transition: 'transform 0.7s ease-out',
+              pointerEvents: 'none',
+            }}
+          />
+          <Typography
+            sx={{
+              position: 'relative',
+              zIndex: 1,
+              color: '#FFF',
+              fontFamily: 'var(--font-tertiary)',
+              fontWeight: 700,
+              fontSize: '30px',
+              letterSpacing: '-0.211px',
+              textTransform: 'capitalize',
+            }}
+          >
+            {title}
+          </Typography>
+        </Box>
+      ) : (
+        <Typography
+          sx={{
+            color: '#FFF',
+            fontFamily: 'var(--font-tertiary)',
+            fontWeight: 700,
+            fontSize: '30px',
+            lineHeight: '12.66px',
+            letterSpacing: '-0.211px',
+            textTransform: 'capitalize',
+          }}
+        >
+          {title}
+        </Typography>
+      )}
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <Box

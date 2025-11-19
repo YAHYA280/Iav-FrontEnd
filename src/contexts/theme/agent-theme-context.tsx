@@ -40,16 +40,16 @@ export const agentColors = {
     border: '#3B82F6',
   },
   ider: {
-    primary: '#8B5CF6',
-    nebula: 'rgba(139, 92, 246, 0.15)',
-    glow: 'rgba(139, 92, 246, 0.3)',
-    border: '#8B5CF6',
-  },
-  itri: {
     primary: '#5D31F8',
     nebula: 'rgba(93, 49, 248, 0.15)',
     glow: 'rgba(93, 49, 248, 0.3)',
     border: '#5D31F8',
+  },
+  itri: {
+    primary: '#8B5CF6',
+    nebula: 'rgba(139, 92, 246, 0.15)',
+    glow: 'rgba(139, 92, 246, 0.3)',
+    border: '#8B5CF6',
   },
   aqal: {
     primary: '#10B981',

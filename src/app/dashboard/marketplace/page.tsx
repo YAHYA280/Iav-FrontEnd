@@ -23,6 +23,17 @@ export default function MarketplacePage() {
     setTitle('Marketplace');
   }, [setTitle]);
 
+  // Listen for custom reset event
+  useEffect(() => {
+    const handleReset = () => {
+      setSelectedAgent(null);
+      setViewState('marketplace');
+    };
+
+    window.addEventListener('marketplace-reset', handleReset);
+    return () => window.removeEventListener('marketplace-reset', handleReset);
+  }, []);
+
   // Get agent's primary color directly
   const agentPrimaryColor = useMemo(() => {
     if (!selectedAgent) return '#A855F7';
